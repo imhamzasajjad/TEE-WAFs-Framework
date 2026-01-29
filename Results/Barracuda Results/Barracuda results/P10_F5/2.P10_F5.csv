@@ -1,0 +1,60 @@
+Sr NO.,Original Timestamp,Payload,Original Status,WAF Status,ML Status,Combined Result,Fuzzed Payload 1,Fuzzed Timestamp 1,WAF Status 1,ML Status 1,Combined Result 1,Fuzzed Payload 2,Fuzzed Timestamp 2,WAF Status 2,ML Status 2,Combined Result 2,Fuzzed Payload 3,Fuzzed Timestamp 3,WAF Status 3,ML Status 3,Combined Result 3,Fuzzed Payload 4,Fuzzed Timestamp 4,WAF Status 4,ML Status 4,Combined Result 4,Fuzzed Payload 5,Fuzzed Timestamp 5,WAF Status 5,ML Status 5,Combined Result 5
+1,2025-10-20T20:18:19.667423,melque de cercos,200,200,200,both_correct,melque/**/de	cercos,2025-10-20T20:18:27.152367,200,403,waf_correct_ml_incorrect,melque	de	cercos,2025-10-20T20:18:38.037999,200,200,both_correct,melque	de/**/cercos,2025-10-20T20:18:48.640487,200,403,waf_correct_ml_incorrect,melque de cercos,2025-10-20T20:18:58.591431,200,200,both_correct,melque/**/de	cercos,2025-10-20T20:19:08.182932,200,403,waf_correct_ml_incorrect
+2,2025-10-20T20:19:17.794947,ludwig_schuster@viavilano.web,200,200,200,both_correct,ludwig_schuster@viavilano.web,2025-10-20T20:19:29.611268,200,200,both_correct,ludwig_schuster@viavilano.web,2025-10-20T20:19:41.783671,200,200,both_correct,ludwig_schuster@viavilano.web,2025-10-20T20:19:52.620988,200,200,both_correct,ludwig_schuster@viavilano.web,2025-10-20T20:20:03.572575,200,200,both_correct,ludwig_schuster@viavilano.web,2025-10-20T20:20:14.657205,200,200,both_correct
+3,2025-10-20T20:20:25.907505,deiadrel,200,200,200,both_correct,deiadrel,2025-10-20T20:20:36.488465,200,200,both_correct,deiadrel,2025-10-20T20:20:50.310020,200,200,both_correct,deiadrel,2025-10-20T20:21:02.542314,200,200,both_correct,deiadrel,2025-10-20T20:21:15.157845,200,200,both_correct,deiadrel,2025-10-20T20:21:27.374016,200,200,both_correct
+4,2025-10-20T20:21:39.961244,"1"" and 8514  =    (  select count  (  *  )   from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",403,403,403,both_correct," OR '^'!='^9'"" and 0x2142 
+=    (  select count  (  *  ) /**/ from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",2025-10-20T20:21:52.086496,403,403,both_correct," or '^' NOT LIKE '^0x9'"" and 0x2142  =    (/**/ select count  (  *  ) /**/ from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",2025-10-20T20:22:05.785367,403,403,both_correct," or '^' not like '^0x9'"" and 0x2142 	=    (  select count  (  *  ) /**/ from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",2025-10-20T20:22:18.706087,403,403,both_correct," oR '^' not like '^0x9'"" and 0x2142 
+=    (  select count  (  *  )   from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",2025-10-20T20:22:31.529877,403,403,both_correct,"/**/Or '^' not like '^0x9'"" and 0x2142 	=    (  select count  (  *  )   from domain.domains as t1,domain.columns as t2,domain.tables as t3  )   and ""rntg"" like ""rntg",2025-10-20T20:22:44.812340,403,403,both_correct
+5,2025-10-20T20:22:57.593574," select * from users where id  =  '1' union select \.,@@VERSION -- 1'",403,403,403,both_correct," SElECT	* FroM users WherE id   LIke   '0x1' union SEleCT \.,@@VERSION --/**/'^e' NOT LIKE '^en''",2025-10-20T20:23:09.482644,403,403,both_correct," SeLEcT	* FROM users wheRE	id   LiKe   '0x1' union seLEct \.,@@VERSION --/**/'^e' NOT LIKE/**/'^en''",2025-10-20T20:23:22.980512,403,403,both_correct,"/**/SELEct	* fROM users WhEre	id   LIkE   '0x1' union seLeCT \.,@@VERSION --/**/'^e'	NOT LIKE/**/'^en''",2025-10-20T20:23:35.408649,403,403,both_correct,"
+SELecT	* fRoM users WHERe	id   LIkE   '0x1' union SELEcT \.,@@VERSION --/**/'^e'	NOT LIKE/**/'^en''",2025-10-20T20:23:49.875839,403,403,both_correct,"
+sELEct	* FrOm users where id  /**/LIKE   '0x1' union selecT \.,@@VERSION --/*C;$g*/'^e'	NOT LIKE/**/'^en''",2025-10-20T20:24:03.762617,403,403,both_correct
+6,2025-10-20T20:24:17.123660,"-5182""   )    )    or 1 group by concat  (  0x7171706a71,  (  select   (  case when   (  4232  =  4232  )   then 1 else 0 end   )    )   ,0x717a767a71,floor  (  rand  (  0  )  *2   )    )    having min  (  0  )  #",403,403,403,both_correct,"-5182""   )    )    OR 1 group by concat  (  0x7171706a71,  (  SELECt   (  CaSE When
+  (  (sElECt 4232)   lIkE   4232  )   thEN 7370 LIKE 7370 ELsE (SELecT 1) EnD   )    )   ,0x717a767a71,floor  (  rand  (  0  )  *2   )/**/   )    having min  (  0  )  #<%",2025-10-20T20:24:29.035358,403,403,both_correct,"-7855 IN (7854,7855,7856)""   )    )    oR 1 group by concat  (  0x7171706a71,  (  seLECT   (  CASE WheN
+  (  (SeleCT (SELECt 1))   LIKE   4232	 )   THEn 7370 likE 7370 eLsE (Select 1) End   )    )   ,0x717a767a71,floor  (  rand  (  0  )  *0x2   )    )    having MIn  (  0  )  #<%",2025-10-20T20:24:43.432246,403,403,both_correct,"-7855 in (7854,7855, Or 0)""   )    )    Or 0x1 group by concat  (  0x7171706a71,  (  sELEcT   (  case WHEN
+  (/**/ (SElect (SEleCT 1))   LIkE   4232  )   TheN 7370 lIkE 6229=6229 eLse (sELECt 1) end   )    )   ,0x717a767a71,floor  (  rand  (  0  )  *0x2   )    )    having mIn  (  0  )  #<%ia",2025-10-20T20:24:56.832801,403,403,both_correct,"-7855 in ((SELECT 7854),7855, Or 0)""   )    )    oR 0x1 group by concat  (  0x7171706a71,  (  seLeCT   (  CAsE WheN
+  (  (SElECT (SeLect 1))   LIkE   4232  )   tHen 7370 lIKe 6229 LIKE
+6229 ELsE (seLEcT 1) EnD   )    )   ,0x717a767a71,floor  (  rand  (   AND 6463!=6464  )  *0x2   )    )    having MiN  (  0  )  #<%ia",2025-10-20T20:25:10.847018,403,403,both_correct,"-7855 IN ((sELeCt (SELECT (SELECT 1))),7855, Or 0)""   )    )    OR 0x1 group by concat  (  0x7171706a71,  (  SElEcT   (  cAsE When
+  (  (seLECT (sELect 1))   lIKe   4232  )   ThEn	7370 LikE 6229 LIkE
+6229 eLSe (SeLect 1) END   )    )   ,0x717a767a71,floor  (  rand  (   anD '4'<>'4$' not like 6464  )  *0x2   )    )    having/**/miN  (  0  )  #<%ia",2025-10-20T20:25:24.185700,403,403,both_correct
+7,2025-10-20T20:25:37.423788,if  (  8727  =  4039  )   select 8727 else drop function giql--,403,403,200,waf_correct_ml_incorrect,IF  (  8727  =   AnD 1  )   seLECt/**/(sELeCT	'Cb' not like 'Cbk') elSE droP function giql--,2025-10-20T20:25:49.756463,200,403,waf_incorrect_ml_correct,"If  (  (SELECT (SELECT 1))  =   anD '*' like '*'  )   SElect/**/(seleCt
+'Cb' not like 'Cbk') eLSe DrOp function/**/giql--",2025-10-20T20:26:04.327845,403,403,both_correct,"if  (  (SELECT (seLECt (SELECT '=	
+i' LIKE '=	
+i')))   LIKE	   anD '*' LiKE/**/'*'  )   sElEct/**/(SELeCt
+'Cb' not like 'Cbk') ELSe DrOp function/**/giql--",2025-10-20T20:26:18.381209,403,403,both_correct,"iF  (  (sElECt (SElECT (SelECt '=	
+i' like '=		i')))   liKe	 /**/ ANd '*' LiKe/**/'*'  )   sElecT/**/(sElECt
+'Cb' not like 'Cbk') ElSe DROp function/**/giql--",2025-10-20T20:26:31.782436,403,403,both_correct,"if  (  (seleCt (sElEct (sELEct '= 
+i' LIKE '=		i')))   LIKe	 /*1y*/ anD '*' lIKE/**/'*'  )   seleCt (SELEcT
+'Cb' not like 'Cbk') eLSe DrOp function/**/giql--",2025-10-20T20:26:44.274338,403,403,both_correct
+8,2025-10-20T20:26:56.680924,"1'  )   as jxqt where 4322  =  4322 or char  (  75  )  ||char  (  70  )  ||char  (  99  )  ||char  (  83  )    =  regexp_substring  (  repeat  (  left  (  crypt_key  (  char  (  65  )  ||char  (  69  )  ||char  (  83  )  ,null  )  ,0  )  ,500000000  )  ,null  )  --",403,403,403,both_correct,"1'  )   aS jxqt wHErE 4322  =   anD 1 OR char  (  (SeleCT 75)  )  ||char  (  70  )  ||char  (  99  )  ||char  (  296 NOT LIKE 297  )    =  regexp_substring  (  repeat	 (  LEFT  (  crypt_key  (  char  (  65  )  ||char  (  69  )   OR char /**/(  83  )  ,null  )  ,0  )  ,500000000  )  ,null  )  --",2025-10-20T20:27:08.166021,403,403,both_correct,"(SELECT 1)'  ) 	 aS jxqt WHErE 4322  =   aNd 1 Or char  (  (SeLect 75)  )  ||char  (  0x46  )  ||char  (  3382 NOT LIKE 3383  )  ||char  (  296 NOT LIKE 297  )    =  regexp_substring  (  repeat	 (  LeFt  (  crypt_key  (  char  (  65  )  ||char  (  69  )   or char  (  83  )  ,null  )  ,0  )  ,500000000  )  ,null  )  --",2025-10-20T20:27:22.885384,403,403,both_correct,"(SelecT 1)'  )   aS jxqt WHErE 4322  =   aNd 1 Or char  (  (SeLect 'BL'<>'BL4')  )  ||char  (  0x46  )  ||char  (  3382 NOT LIKE  AND 1  )  ||char  (  296 not like 297  )    =/*2JB*/ regexp_substring  (  repeat	 (  lEFt  (  crypt_key  (  char  (  65  )  ||char  (  69  )   oR char  (  83  )  ,null  )  ,0  )  ,0x1dcd6500  )  ,null  )  --",2025-10-20T20:27:35.885461,403,403,both_correct,"(sElEct 1)'  )   aS jxqt WHErE 4322  =   aNd 1 Or char  (  (SeLect 'BL'<>'BL4')  )  ||char  (  0x46 /**/)  ||char  (  3382 NOT LIKE  AND 1  )  ||char  (  ''='' not like 297  )     lIke /**s(*/ regexp_substring  (  repeat	 (  lefT  (  crypt_key  (  char 
+(   or 0x0  )  ||char  (  69  )   oR char  (  83  )  ,null  )  ,0  )  ,0x1dcd6500  )  ,null  )  --",2025-10-20T20:27:48.909235,403,403,both_correct,"(SELECT '*+t' liKE '*+t')'  )   aS jxqt WHErE 4322  =   aNd  OR 0 Or char  (  (SeLect 'BL'<>'BL4')  )  ||char  (  0x46  )  ||char  (  (SELECT 3382) NOT LIKE  AND 1  )  ||char  (  ''='' not like 297  )     like /**s(*/ regexp_substring  (  repeat  (  LEft  (  crypt_key  (  char 
+(   or 0x0  )   or char  (  69  )   OR char  (  83  )  ,null  )  ,0  )  ,0x1dcd6500  )  ,null  )  --",2025-10-20T20:28:02.266215,403,403,both_correct
+9,2025-10-20T20:28:15.242749,"1""   )    )    as yuqr where 7226  =  7226 and   (  select * from   (  select  (  sleep  (  5   )    )     )  gcrr  )  #",403,403,403,both_correct,"0x1""   )    )    AS yuqr Where 6156 LIKE 6156   LIkE    oR 0 aNd  
+(  sElEct * frOM   (  SElecT  (  sleep  (/**/ 5   )    )     )  gcrr  )  #",2025-10-20T20:28:27.414114,403,403,both_correct,"0x1""   )    )    AS yuqr WhEre (SeleCt 6156) LiKe 2539!=2540   LIkE    ||  OR 0 aNd  	(  sELEct * FroM   (  seLecT  (  sleep  (  5   )    )     )  gcrr  )  #",2025-10-20T20:28:41.318970,403,403,both_correct,"0x1""   )    )    AS yuqr WHERe/*n[E*/(sELecT 6156) lIke 2539!=(SELECT 2540)   LiKe     or   OR  OR 0 And  
+(  sElECT * FRom   (  sElECt  (  sleep  (  229 IN (228,229,230)   )    )     )  gcrr  )  #",2025-10-20T20:28:53.851705,403,403,both_correct,"0x1""   )    )    as yuqr WHerE/**/(sELECt ',V' likE ',V') likE 2539!=(sElEct  Or 0)   lIKe     or  /**/OR  Or 0 ANd  
+(  SeLECt
+* FrOM   (  seLECT  (  sleep  (  (SElECT 229) iN (228,229,230)   )    )     )  gcrr  )  #",2025-10-20T20:29:06.551039,403,403,both_correct,"0x1""   )    )    AS yuqr WHerE (selEct ',V' liKE ',V') lIKE  and (seLeCt 1)!=(SELEcT  Or 0)   lIKE     Or  /**/||  oR 8257 In (8256,8257,8258) And  
+(  seLEct	* FRom   (  selecT  (  sleep  (  (SeLEct 229) IN (228,229,230)   )    )     )  gcrr  )  #",2025-10-20T20:29:19.042971,403,403,both_correct
+10,2025-10-20T20:29:32.194939,  )   or pg_sleep  (  __TIME__  )  --,403,200,200,both_incorrect, /**/)   Or pg_sleep  (  __TIME__  )	 --,2025-10-20T20:29:44.148545,200,403,waf_incorrect_ml_correct," /*Y;V*/)   Or pg_sleep  ( /**/__TIME__  )
+ --",2025-10-20T20:29:58.582886,200,403,waf_incorrect_ml_correct,"/**//*Y;V*/)   or pg_sleep  ( /*}blHK*/__TIME__
+ )
+ --",2025-10-20T20:30:11.982998,200,403,waf_incorrect_ml_correct,"/**//*h^=*/)   oR pg_sleep 	( /**/__TIME__
+ )
+/**/--",2025-10-20T20:30:25.577993,200,403,waf_incorrect_ml_correct," /*t*/)   Or pg_sleep 
+( /**/__TIME__
+ )
+/**/--",2025-10-20T20:30:39.383512,200,403,waf_incorrect_ml_correct
+
+Overall Results
+WAF TP,35
+WAF TN,18
+WAF FP,0
+WAF FN,7
+ML TP,40
+ML TN,15
+ML FP,3
+ML FN,2
+
+Combined Results (2x2 Matrix)
+,WAF Correct,WAF Incorrect
+ML Correct,49,6
+ML Incorrect,4,1

