@@ -26,17 +26,16 @@ services:
     networks:
       - app-network
     depends_on:
-      - waf
-      - ml
+      - rb_waf
+      - ml_waf
 
-  waf:
-    image: waf-image
+  rb_waf:
     build:
       context: ./rb_waf
     networks:
       - app-network
 
-  ml:
+  ml_waf:
     build:
       context: ./ml_waf
     ports:
