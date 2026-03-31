@@ -7,10 +7,10 @@ import os
 app = Flask(__name__)
 
 # WAF URL
-WAF_URL = 'http://waf/'  # Adjust if necessary
+WAF_URL = 'http://rb_waf/'  # Adjust if necessary
 
 # ML Service URL (Assuming it runs on port 8000 in the same network)
-ML_URL = 'http://ml:8000/'  # Adjust if necessary
+ML_URL = 'http://ml_waf:8000/'  # Adjust if necessary
 
 # Ensure the logs directory exists
 LOG_DIRECTORY = 'logs'

@@ -12,8 +12,8 @@ services:
     depends_on:
       - server
     environment:
-      - NUM_SAMPLES=1 # Adjust the number of samples as needed
-      - NUM_FUZZING_ROUNDS=2 # Adjust the number of fuzzing rounds as needed
+      - NUM_SAMPLES=2 # Adjust the number of samples as needed
+      - NUM_FUZZING_ROUNDS=3 # Adjust the number of fuzzing rounds as needed
 
   server:
     build:
@@ -26,19 +26,18 @@ services:
     networks:
       - app-network
     depends_on:
-      - waf
-      - ml
+      - rb_waf
+      - ml_waf
 
-  waf:
-    image: waf-image
+  rb_waf:
     build:
-      context: ./waf
+      context: ./rb_waf
     networks:
       - app-network
 
-  ml:
+  ml_waf:
     build:
-      context: ./ml
+      context: ./ml_waf
     ports:
       - "8000:8000"  # Map ML service port 8000 to host port 8000
     networks:
