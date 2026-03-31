@@ -1,15 +1,19 @@
 #!/bin/bash
 
+set -e
+
+apt-get update -y
+
 # Install necessary packages
-apt install gnupg2 software-properties-common curl wget git unzip -y
+apt-get install gnupg2 software-properties-common curl wget git unzip -y
 
 # Add repository for Apache2
 add-apt-repository ppa:ondrej/apache2 -y
-apt update -y
+apt-get update -y
 
 # Install Apache2 and ModSecurity
-apt install apache2 -y
-apt install libapache2-mod-security2 -y
+apt-get install apache2 -y
+apt-get install libapache2-mod-security2 -y
 
 # Enable security module
 a2enmod security2
@@ -23,19 +27,8 @@ sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/modsecurity/modsec
 # Restart Apache service
 service apache2 restart
 
-# Download and extract Core Rule Set
-wget https://github.com/coreruleset/coreruleset/archive/v3.3.0.tar.gz
-tar xvf v3.3.0.tar.gz
-mkdir /etc/apache2/modsecurity-crs/
-mv coreruleset-3.3.0/ /etc/apache2/modsecurity-crs
-
-# Navigate to Core Rule Set directory and configure
-cd /etc/apache2/modsecurity-crs/coreruleset-3.3.0/
-mv crs-setup.conf.example crs-setup.conf
-
-# Include the necessary Core Rule Set configurations
-echo "IncludeOptional /etc/apache2/modsecurity-crs/coreruleset-3.3.0/crs-setup.conf" >> /etc/apache2/mods-enabled/security2.conf
-echo "IncludeOptional /etc/apache2/modsecurity-crs/coreruleset-3.3.0/rules/*.conf" >> /etc/apache2/mods-enabled/security2.conf
+# Use distro-provided CRS configuration from libapache2-mod-security2.
+# Avoiding manual CRS download prevents duplicate rule-id loading errors.
 
 # Test Apache configuration
 apache2ctl -t

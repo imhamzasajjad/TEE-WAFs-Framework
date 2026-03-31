@@ -7,11 +7,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Copy the install script into the container
 COPY install_modsecurity.sh /install_modsecurity.sh
 
-# Make the script executable
-RUN chmod +x /install_modsecurity.sh
+# Normalize line endings and make script executable
+RUN sed -i 's/\r$//' /install_modsecurity.sh && chmod +x /install_modsecurity.sh
 
 # Run the install script
-RUN /install_modsecurity.sh
+RUN bash /install_modsecurity.sh
 
 # Expose the default Apache port
 EXPOSE 80
