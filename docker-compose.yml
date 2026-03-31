@@ -32,13 +32,13 @@ services:
   waf:
     image: waf-image
     build:
-      context: ./waf
+      context: ./rb_waf
     networks:
       - app-network
 
   ml:
     build:
-      context: ./ml
+      context: ./ml_waf
     ports:
       - "8000:8000"  # Map ML service port 8000 to host port 8000
     networks:

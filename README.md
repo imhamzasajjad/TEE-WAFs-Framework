@@ -129,7 +129,7 @@ Quick checks:
    - `client/logs/`
    - `client/Results/`
    - `server/logs/`
-   - `waf/logs/`
+   - `rb_waf/logs/`
 
 If any service exits early, check:
 
@@ -174,8 +174,8 @@ The project uses the HTTP Params Dataset from Kaggle:
 ## Project Documentation
 
 - Top-level usage and orchestration: [README.md](README.md)
-- ML module documentation: [ml/README.rst](ml/README.rst)
-- ML contribution guide: [ml/CONTRIBUTING.md](ml/CONTRIBUTING.md)
+- ML module documentation: [ml_waf/README.rst](ml_waf/README.rst)
+- ML contribution guide: [ml_waf/CONTRIBUTING.md](ml_waf/CONTRIBUTING.md)
 
 ## Results and Logs
 
@@ -183,7 +183,7 @@ Generated outputs are stored in:
 
 - `client/logs/` and `client/Results/`
 - `server/logs/`
-- `waf/logs/`
+- `rb_waf/logs/`
 - `Results/` (experiment outputs)
 
 ## Troubleshooting
