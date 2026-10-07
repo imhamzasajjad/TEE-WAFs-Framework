@@ -1,6 +1,7 @@
 """Lightweight, explainable quality analysis for WAF payload CSV datasets."""
 
 import csv
+import io
 import json
 import math
 import re
@@ -11,7 +12,7 @@ from statistics import mean, median
 from urllib.parse import unquote_plus
 
 
-PAYLOAD_COLUMNS = ("payload", "request", "text", "input", "query")
+PAYLOAD_COLUMNS = ("payload", "payloads", "request", "text", "input", "query")
 LABEL_COLUMNS = ("status code", "status_code", "status", "label", "class", "target")
 CATEGORY_COLUMNS = ("attack category", "attack_category", "attack type", "attack_type", "category", "family")
 CHUNK_SIZE = 256
@@ -20,6 +21,17 @@ CHUNK_SIZE = 256
 def _column(fieldnames, candidates):
     lookup = {(name or "").strip().lower(): name for name in fieldnames or []}
     return next((lookup[name] for name in candidates if name in lookup), None)
+
+
+def _read_text(input_path):
+    """Read common dataset encodings without changing the source file."""
+    raw = Path(input_path).read_bytes()
+    for encoding in ("utf-8-sig", "cp1252", "latin-1"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    raise UnicodeDecodeError("dataset", raw, 0, len(raw), "unsupported encoding")
 
 
 def _canonical(payload):
@@ -73,17 +85,16 @@ def analyze_dataset(input_path, output_dir):
     ]
     chunk_entropy_mean = mean(chunk_entropies) if chunk_entropies else 0.0
 
-    with input_path.open("r", encoding="utf-8-sig", newline="") as source:
-        reader = csv.DictReader(source)
-        payload_column = _column(reader.fieldnames, PAYLOAD_COLUMNS)
-        label_column = _column(reader.fieldnames, LABEL_COLUMNS)
-        category_column = _column(reader.fieldnames, CATEGORY_COLUMNS)
-        if not payload_column or not label_column:
-            raise ValueError(
-                "Dataset must contain a payload column and a label/status column. "
-                f"Found: {reader.fieldnames or []}"
-            )
-        rows = list(reader)
+    reader = csv.DictReader(io.StringIO(_read_text(input_path), newline=""))
+    payload_column = _column(reader.fieldnames, PAYLOAD_COLUMNS)
+    label_column = _column(reader.fieldnames, LABEL_COLUMNS)
+    category_column = _column(reader.fieldnames, CATEGORY_COLUMNS)
+    if not payload_column or not label_column:
+        raise ValueError(
+            "Dataset must contain a payload column and a label/status column. "
+            f"Found: {reader.fieldnames or []}"
+        )
+    rows = list(reader)
 
     total = len(rows)
     valid = []

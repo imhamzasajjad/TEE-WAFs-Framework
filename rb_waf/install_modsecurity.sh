@@ -5,11 +5,10 @@ set -e
 apt-get update -y
 
 # Install necessary packages
-apt-get install gnupg2 software-properties-common curl wget git unzip -y
+apt-get install gnupg2 curl wget git unzip -y
 
-# Add repository for Apache2
-add-apt-repository ppa:ondrej/apache2 -y
-apt-get update -y
+# Use Apache and ModSecurity packages from Ubuntu's native repositories.
+# The Ondrej PPA does not publish packages for every Ubuntu release.
 
 # Install Apache2 and ModSecurity
 apt-get install apache2 -y
