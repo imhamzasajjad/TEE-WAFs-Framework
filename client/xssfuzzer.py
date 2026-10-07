@@ -138,11 +138,13 @@ def js_operator_rewrite(payload):
 
 
 class XssFuzzer:
-    """Generate bounded, independently mutated XSS representations.
+    """Generate bounded, compounded XSS representations.
 
-    Each round starts from the original payload and applies one operator. This
-    avoids the runaway nesting caused by repeatedly mutating the previous
-    mutation while still allowing every operator to be exercised.
+    Each round starts from the original payload and applies a short random
+    chain of operators (not a single one), so that many rounds explore
+    distinct variants instead of collapsing onto a handful of wrappers.
+    Emitted variants are de-duplicated within a run, and every chain is
+    validated structurally before it is returned.
     """
 
     strategies = [
@@ -156,17 +158,22 @@ class XssFuzzer:
         js_function_alias,
     ]
 
-    def __init__(self, payload, max_length=2048):
+    def __init__(self, payload, max_length=2048, max_chain=4, max_attempts=16):
         self.initial_payload = payload
         self.payload = payload
         self.max_length = max(128, int(max_length))
-        self._remaining = []
+        self.max_chain = max(1, min(int(max_chain), len(self.strategies)))
+        self.max_attempts = max(1, int(max_attempts))
+        self._emitted = set()
         self.last_operator = ''
         self.last_validation = ''
 
-    def _refill_operators(self):
-        self._remaining = list(self.strategies)
-        random.shuffle(self._remaining)
+    def _choose_chain(self):
+        """Pick a short, ordered chain of distinct operators to compound."""
+        length = random.randint(1, self.max_chain)
+        pool = list(self.strategies)
+        random.shuffle(pool)
+        return pool[:length]
 
     @staticmethod
     def _validate(payload):
@@ -192,34 +199,54 @@ class XssFuzzer:
         return True, 'ok'
 
     def fuzz(self):
-        # Try at most two operator cycles. The second cycle prevents a source
-        # payload with only a few applicable operators from falling back to the
-        # unchanged original after its first cycle is exhausted.
-        for _ in range(2):
-            if not self._remaining:
-                self._refill_operators()
-            while self._remaining:
-                strategy = self._remaining.pop()
-                candidate = strategy(self.initial_payload)
-                self.last_operator = strategy.__name__
-                if len(candidate) > self.max_length:
-                    self.last_validation = f'rejected-length>{self.max_length}'
-                    continue
-                if candidate == self.initial_payload:
-                    self.last_validation = 'rejected-unchanged'
-                    continue
-                valid, reason = self._validate(candidate)
-                if not valid:
-                    self.last_validation = f'rejected-{reason}'
-                    continue
+        # Make several attempts to produce a *fresh*, valid, in-bounds variant
+        # by compounding a short chain of operators. Compounding (rather than a
+        # single operator) and de-duplication together stop the output from
+        # collapsing onto a few repeated wrappers across many rounds.
+        fallback = None
+        fallback_operators = ''
+        last_reason = 'no-valid-mutation'
+        for _ in range(self.max_attempts):
+            chain = self._choose_chain()
+            candidate = self.initial_payload
+            for strategy in chain:
+                candidate = strategy(candidate)
+            names = '+'.join(strategy.__name__ for strategy in chain)
+
+            if len(candidate) > self.max_length:
+                last_reason = f'rejected-length>{self.max_length}'
+                continue
+            if candidate == self.initial_payload:
+                last_reason = 'rejected-unchanged'
+                continue
+            valid, reason = self._validate(candidate)
+            if not valid:
+                last_reason = f'rejected-{reason}'
+                continue
+            if candidate not in self._emitted:
+                self._emitted.add(candidate)
                 self.payload = candidate
+                self.last_operator = names
                 self.last_validation = 'ok'
                 return candidate
+            # Valid but already produced this run: keep it as a fallback and
+            # keep trying for something new.
+            fallback = candidate
+            fallback_operators = names
+            last_reason = 'duplicate'
 
-        # No operator produced a valid variant in this cycle. Keep the source
-        # visible in the log rather than sending an invalid synthetic payload.
+        if fallback is not None:
+            self.payload = fallback
+            self.last_operator = fallback_operators
+            self.last_validation = 'ok-duplicate'
+            return fallback
+
+        # No operator chain produced a valid variant. Keep the source visible
+        # in the log rather than sending an invalid synthetic payload.
         self.last_operator = 'none'
-        self.last_validation = 'no-valid-mutation'
+        self.last_validation = (
+            'no-valid-mutation' if last_reason == 'duplicate' else last_reason
+        )
         self.payload = self.initial_payload
         return self.payload
 
