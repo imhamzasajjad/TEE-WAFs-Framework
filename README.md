@@ -35,7 +35,7 @@ provides the rule-based comparison.
 - `client`: analyzes the dataset, samples payloads, generates fuzzed variants,
   sends requests, and records benchmark results
 - `server`: accepts client requests and coordinates both WAF decisions
-- `ml_waf`: WAF-Brain-based ML service
+- `ml_waf`: selectable ML service; WAF-Brain is the default provider
 - `rb_waf`: ModSecurity/Apache rule-based WAF
 
 ## Architecture and Workflow
@@ -44,7 +44,7 @@ provides the rule-based comparison.
 flowchart LR
    D[(payloads.csv)] --> A[Dataset quality analysis]
    A --> Q[(Dataset Analysis reports)]
-   A --> C[Sampling and SQL fuzzing]
+   A --> C[Sampling and SQL/XSS fuzzing]
    C --> S[server :5000]
    S --> W[rb_waf]
    S --> M[ml_waf :8000]
@@ -81,7 +81,7 @@ docker compose version
 Clone the repository:
 
 ```powershell
-git clone https://github.com/imhamzasajjad/TEE-WAFs-Framework
+git clone --recurse-submodules https://github.com/imhamzasajjad/TEE-WAFs-Framework
 cd TEE-WAFs-Framework
 ```
 
@@ -91,8 +91,8 @@ Build and run the complete experiment:
 docker compose up --build --abort-on-container-exit --exit-code-from client
 ```
 
-The client first prints the dataset report, then sends the configured original and
-fuzzed payloads. After the final combined result, Compose stops the remaining
+If `ANALYZE_DATASET` is enabled, the client first prints the dataset report, then
+sends the configured original and fuzzed payloads. After the final combined result, Compose stops the remaining
 services and returns the client's exit code.
 
 For subsequent runs that do not contain source changes:
@@ -109,7 +109,8 @@ docker compose down
 
 ## Client Configuration
 
-Client settings are defined under `services.client.environment` in
+Client settings are read from the project `.env` file. Compose passes them to the
+client container using the variable defaults in
 [`docker-compose.yml`](docker-compose.yml):
 
 ```yaml
@@ -119,15 +120,84 @@ services:
       - ANALYZE_DATASET=yes
       - NUM_SAMPLES=1
       - NUM_FUZZING_ROUNDS=1
+      - PAYLOAD_SCOPE=malicious_only
 ```
 
 | Variable | Purpose |
 |---|---|
 | `ANALYZE_DATASET` | `yes` runs analysis; `no` skips it during repeated experiments. |
+| `PAYLOADS_FILE` | Dataset path; supports `payload/status code` and `Payloads/Class` formats. |
 | `NUM_SAMPLES` | Number of original rows randomly selected from the dataset. |
 | `NUM_FUZZING_ROUNDS` | Number of fuzzed variants generated per selected row. |
-| `PAYLOADS_FILE` | Input path inside the client container; defaults to `payloads.csv`. |
+| `PAYLOAD_SCOPE` | `malicious_only` fuzzes only rows labelled 403 for adversarial-evasion testing; `both` includes malicious and benign rows. |
+| `MAX_MUTATED_LENGTH` | Maximum XSS mutation length; defaults to 2048 characters. |
+| `FUZZER_TYPE` | Fuzzing family: `sql`, `xss`, `html`, or `javascript`. |
 | `DATASET_ANALYSIS_DIR` | Report directory; defaults to `Dataset Analysis`. |
+| `ML_WAF_PROVIDER` | ML provider: `wafbrain` (default), `ml_based_waf`, or `xss_waf`. |
+
+### Selecting the ML provider
+
+The client/server contract stays unchanged when the model changes. Select the
+provider in a `.env` file next to `docker-compose.yml`:
+
+```env
+ML_WAF_PROVIDER=wafbrain
+```
+
+WAF-Brain is currently installed and is the default. The `ml_based_waf` and
+`xss_waf` providers are loaded through adapters that preserve the same HTTP
+contract. Their model artifacts and preprocessing are third-party research
+code, so benchmark reports should record the pinned commit and model files.
+
+Provider sources:
+
+- [`BBVA/waf-brain`](https://github.com/BBVA/waf-brain) — default SQL-focused model
+- [`vladan-stojnic/ML-based-WAF`](https://github.com/vladan-stojnic/ML-based-WAF) — SQLi/XSS research candidate
+- [`Jeff-Rowell/XSS-WAF`](https://github.com/Jeff-Rowell/XSS-WAF) — lightweight XSS/SQLi research baseline
+
+The provider layout and pinned model commits are documented in
+[`ml_waf/PROVIDERS.md`](ml_waf/PROVIDERS.md). The external model folders are
+kept directly under `ml_waf/` so each provider can be inspected or replaced
+independently.
+
+### Fuzzing modes
+
+The client supports two payload mutation families. `FUZZER_TYPE=sql` uses the
+SQL mutator in [`client/sqlfuzzer.py`](client/sqlfuzzer.py), including comment,
+whitespace, case, tautology, numeric-representation, and operator rewrites.
+`FUZZER_TYPE=xss` uses [`client/xssfuzzer.py`](client/xssfuzzer.py) and applies
+HTML/JavaScript mutations such as tag-case changes, HTML comment insertion and
+rewriting, wrapper tags, JavaScript comment insertion, function-argument
+rewriting, function aliases, and attribute-context variants (`onerror`,
+`onload`, and `javascript:` URL attributes). Both modes use the
+same sampling, request, result, and logging pipeline. Select the intended family
+explicitly in `.env` for each experiment.
+
+### Adversarial-evasion mode
+
+For WAF-bypass experiments, use:
+
+```env
+FUZZER_TYPE=xss
+PAYLOAD_SCOPE=malicious_only
+```
+
+The client selects only source rows labelled `403`, keeps that malicious label as
+the expected result for every mutation, and treats a `200` response as a possible
+evasion (false negative). This prevents benign text that is wrapped in XSS syntax
+from being incorrectly counted as an adversarial result. Set
+`PAYLOAD_SCOPE=both` when a mixed malicious/benign evaluation is required.
+
+Fuzzing rounds are cumulative: each round mutates the result of the previous
+round in the legacy implementation. The current XSS fuzzer instead starts each
+round from the original payload, selects one non-repeating operator, enforces
+`MAX_MUTATED_LENGTH`, and records the operator and validation result. SQL
+fuzzing behavior is unchanged.
+
+The client automatically normalizes common labels: `Malicious`/`Attack`/`1`
+become HTTP status `403`, while `Benign`/`Normal`/`0` become `200`. This allows
+the original SQL dataset and the Mereani/Howe XSS dataset to be tested without
+editing the downloaded source files.
 
 Enabled values for `ANALYZE_DATASET` are `yes`, `true`, `on`, and `1`, ignoring
 case. Other values disable analysis. When disabled, payload testing runs normally
@@ -137,8 +207,9 @@ and existing analysis reports remain unchanged.
 
 ### Input format
 
-The default input is [`client/payloads.csv`](client/payloads.csv). It must contain
-a payload column and a label or HTTP-status column:
+The default input is [`client/Dataset/payloadshttp.csv`](client/Dataset/payloadshttp.csv).
+It must contain a payload column and a label or HTTP-status column. The client
+also accepts the downloaded XSS format with `Payloads,Class` columns:
 
 ```csv
 payload,status code
@@ -249,11 +320,21 @@ For every original and fuzzed payload, the client records:
 - Whether each WAF was correct
 - Whether both systems agreed or disagreed
 
+Each `client_logs.csv` begins with an **Experiment Configuration** section that
+records the dataset, fuzzer, ML provider, RB firewall, sample count, fuzzing
+rounds, and payload scope used for that run. This makes the results traceable to
+the actual container configuration.
+
+In `malicious_only` mode, report baseline errors separately from mutation
+evasions. For example, an original malicious payload classified as `200` is a
+baseline false negative; a fuzzed malicious payload classified as `200` is a
+mutation-induced evasion.
+
 It also calculates TP, TN, FP, and FN totals and prints a combined 2x2 comparison:
 
 ```text
 Combined Results (2x2 Matrix):
-               WAF Correct    WAF Incorrect
+               RB Correct     RB Incorrect
 ML Correct     2              0
 ML Incorrect   0              0
 ```

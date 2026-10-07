@@ -1,0 +1,10 @@
+.git
+ml_based_waf/.git
+ml_based_waf/Dataset
+ml_based_waf/Classifier/*.ipynb
+ml_based_waf/WAF/requests_log
+ml_based_waf/WAF/log.db
+xss_waf/.git
+xss_waf/vuln
+xss_waf/waf/badqueries.txt
+xss_waf/waf/goodqueries.txt

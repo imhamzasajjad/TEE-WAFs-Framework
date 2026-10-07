@@ -1,5 +1,7 @@
 # Use the official Ubuntu image as a base
-FROM ubuntu:latest
+# Pin the base image to an LTS release. Third-party PPAs often lag behind
+# Ubuntu development releases (for example, "resolute").
+FROM ubuntu:24.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive

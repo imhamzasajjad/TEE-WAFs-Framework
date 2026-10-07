@@ -13,9 +13,14 @@ services:
     depends_on:
       - server
     environment:
-      - ANALYZE_DATASET=yes # Set to no to skip analysis on repeated benchmark runs
-      - NUM_SAMPLES=1 # Adjust the number of samples as needed
-      - NUM_FUZZING_ROUNDS=1 # Adjust the number of fuzzing rounds as needed
+      - ANALYZE_DATASET=${ANALYZE_DATASET:-no} # Set to yes to run analysis
+      - PAYLOADS_FILE=${PAYLOADS_FILE:-client/Dataset/xss_payloads.csv} # Override for another dataset
+      - NUM_SAMPLES=${NUM_SAMPLES:-2} # Number of payloads to test
+      - NUM_FUZZING_ROUNDS=${NUM_FUZZING_ROUNDS:-2} # Fuzzing rounds per payload
+      - PAYLOAD_SCOPE=${PAYLOAD_SCOPE:-malicious_only} # malicious_only or both
+      - MAX_MUTATED_LENGTH=${MAX_MUTATED_LENGTH:-2048} # XSS mutation length cap
+      - FUZZER_TYPE=${FUZZER_TYPE:-xss} # sql (default) or xss/html/javascript
+      - ML_WAF_PROVIDER=${ML_WAF_PROVIDER:-wafbrain} # ML provider used by ml_waf
 
   server:
     build:
@@ -40,6 +45,10 @@ services:
   ml_waf:
     build:
       context: ./ml_waf
+    environment:
+      # Select the ML provider without changing the client/server wiring.
+      # Select wafbrain, ml_based_waf, or xss_waf through .env.
+      - ML_WAF_PROVIDER=${ML_WAF_PROVIDER:-wafbrain}
     ports:
       - "8000:8000"  # Map ML service port 8000 to host port 8000
     networks:

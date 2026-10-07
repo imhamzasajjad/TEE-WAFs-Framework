@@ -1,0 +1,6 @@
+[submodule "ml_waf/ml_based_waf"]
+	path = ml_waf/ml_based_waf
+	url = https://github.com/vladan-stojnic/ML-based-WAF.git
+[submodule "ml_waf/xss_waf"]
+	path = ml_waf/xss_waf
+	url = https://github.com/Jeff-Rowell/XSS-WAF.git
