@@ -296,13 +296,18 @@ def benign_padding(payload):
 
 
 class XssFuzzer:
-    """Generate bounded, compounded XSS representations.
+    """Generate escalating, still-functional XSS representations.
 
-    Each round starts from the original payload and applies a short random
-    chain of operators (not a single one), so that many rounds explore
-    distinct variants instead of collapsing onto a handful of wrappers.
-    Emitted variants are de-duplicated within a run, and every chain is
-    validated structurally before it is returned.
+    Like SqlFuzzer, this compounds mutations cumulatively: each round builds on
+    the *previous* round's payload (not a reset to the original), so the payload
+    drifts progressively further across rounds. That drift is what lets the
+    character-bigram ML model eventually be fooled.
+
+    Unlike SqlFuzzer, every step is guarded: a mutation is accepted only if it
+    stays within the length cap *and* still passes the structural XSS check, so
+    the payload never degrades into a non-executable string that bypasses the
+    classifier without being a real attack. The operators are themselves
+    execution-preserving, so an accepted chain keeps the payload working.
     """
 
     strategies = [
@@ -322,12 +327,11 @@ class XssFuzzer:
         benign_padding,
     ]
 
-    def __init__(self, payload, max_length=2048, max_chain=4, max_attempts=16):
+    def __init__(self, payload, max_length=2048, max_chain=4):
         self.initial_payload = payload
         self.payload = payload
         self.max_length = max(128, int(max_length))
         self.max_chain = max(1, min(int(max_chain), len(self.strategies)))
-        self.max_attempts = max(1, int(max_attempts))
         self._emitted = set()
         self.last_operator = ''
         self.last_validation = ''
@@ -367,55 +371,39 @@ class XssFuzzer:
         return True, 'ok'
 
     def fuzz(self):
-        # Make several attempts to produce a *fresh*, valid, in-bounds variant
-        # by compounding a short chain of operators. Compounding (rather than a
-        # single operator) and de-duplication together stop the output from
-        # collapsing onto a few repeated wrappers across many rounds.
-        fallback = None
-        fallback_operators = ''
-        last_reason = 'no-valid-mutation'
-        for _ in range(self.max_attempts):
-            chain = self._choose_chain()
-            candidate = self.initial_payload
-            for strategy in chain:
-                candidate = strategy(candidate)
-            names = '+'.join(strategy.__name__ for strategy in chain)
-
-            if len(candidate) > self.max_length:
-                last_reason = f'rejected-length>{self.max_length}'
-                continue
-            if candidate == self.initial_payload:
-                last_reason = 'rejected-unchanged'
-                continue
-            valid, reason = self._validate(candidate)
-            if not valid:
-                last_reason = f'rejected-{reason}'
-                continue
-            if candidate not in self._emitted:
-                self._emitted.add(candidate)
-                self.payload = candidate
-                self.last_operator = names
+        # Escalate cumulatively, like SqlFuzzer: build on the running payload
+        # (self.payload), not a reset to the original, so each round drifts
+        # further. Each operator in the chain is applied only if its result
+        # still fits the length cap and still passes the structural XSS check;
+        # otherwise that step is skipped. This keeps the escalation from ever
+        # degrading the payload into a non-executable string (the flaw that
+        # inflates SqlFuzzer's bypass count with broken payloads).
+        # Try a few random chains so a round rarely wastes a duplicate send
+        # once the payload is already heavily transformed.
+        for _ in range(4):
+            working = self.payload
+            applied = []
+            for strategy in self._choose_chain():
+                candidate = strategy(working)
+                if candidate == working:
+                    continue
+                if len(candidate) > self.max_length:
+                    continue
+                if not self._validate(candidate)[0]:
+                    continue
+                working = candidate
+                applied.append(strategy.__name__)
+            if applied:
+                self.payload = working
+                self._emitted.add(working)
+                self.last_operator = '+'.join(applied)
                 self.last_validation = 'ok'
-                return candidate
-            # Valid but already produced this run: keep it as a fallback and
-            # keep trying for something new.
-            fallback = candidate
-            fallback_operators = names
-            last_reason = 'duplicate'
+                return working
 
-        if fallback is not None:
-            self.payload = fallback
-            self.last_operator = fallback_operators
-            self.last_validation = 'ok-duplicate'
-            return fallback
-
-        # No operator chain produced a valid variant. Keep the source visible
-        # in the log rather than sending an invalid synthetic payload.
+        # Payload has plateaued (e.g. at the length cap): nothing new applied.
+        self._emitted.add(self.payload)
         self.last_operator = 'none'
-        self.last_validation = (
-            'no-valid-mutation' if last_reason == 'duplicate' else last_reason
-        )
-        self.payload = self.initial_payload
+        self.last_validation = 'no-change-this-round'
         return self.payload
 
     def current(self):
