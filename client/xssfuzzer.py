@@ -367,42 +367,59 @@ class XssFuzzer:
     classifier without being a real attack. The operators are themselves
     execution-preserving, so an accepted chain keeps the payload working.
 
-    Finally, each returned payload is diluted with a large benign comment
-    (see ``_dilute_payload``) to drive down the character-bigram weight the ML
-    model keys on - the one execution-preserving lever for bypassing it. The
-    dilution is applied to the output only, so the escalating core stays small.
+    By default only the core, vector-preserving operators run, so a mutated
+    payload is the *same attack* in a different representation. Alternate-vector
+    operators (``alt_vectors=True``) and benign-text dilution
+    (``dilution``) are opt-in: the first changes the delivery vector, the second
+    is a statistical ML-evasion trick rather than a payload mutation, so neither
+    is on unless the caller asks.
     """
 
-    strategies = [
+    # Core operators preserve the payload's vector and effect: only
+    # representation, encoding, and equivalent-code changes. These never turn
+    # one kind of XSS into another, so the mutated payload is the same attack.
+    CORE_OPERATORS = [
         tag_case,
         comments_injection,
         comments_rewriting,
         invariant_tags,
-        attribute_context,
         js_comments_injection,
         js_argument_rewrite,
         js_function_alias,
         js_keyword_split,
         js_eval_base64,
         js_fromcharcode,
-        scheme_obfuscation,
-        quoteless_vector,
-        rare_event_vector,
         js_unicode_escape,
+        scheme_obfuscation,
         js_call_variation,
         tag_separator_obfuscation,
     ]
 
-    def __init__(self, payload, max_length=2048, max_chain=4, dilution=None):
+    # Alternate-vector operators keep the same effect (the same dialog still
+    # fires) but change the delivery mechanism, e.g. <script> -> <img onerror>.
+    # Opt-in via alt_vectors because they change the payload's vector, not just
+    # its representation.
+    ALT_VECTOR_OPERATORS = [
+        attribute_context,
+        quoteless_vector,
+        rare_event_vector,
+    ]
+
+    def __init__(self, payload, max_length=2048, max_chain=4, dilution=0,
+                 alt_vectors=False):
         self.initial_payload = payload
         self.payload = payload
         self.max_length = max(128, int(max_length))
+        # Build the active operator set: core always, alternate vectors only
+        # when explicitly requested (they change the payload's vector).
+        self.strategies = list(self.CORE_OPERATORS)
+        if alt_vectors:
+            self.strategies = self.strategies + self.ALT_VECTOR_OPERATORS
         self.max_chain = max(1, min(int(max_chain), len(self.strategies)))
         # Dilution target = total length to pad the sent payload up to with
-        # benign text (0 disables it). ``None`` means "fill the whole budget".
-        # Making this a knob lets a run turn dilution off and measure the
-        # mutation operators in isolation, since dilution is the dominant
-        # lever against the character-bigram ML WAF.
+        # benign text (0 disables it, the default). ``None`` means "fill the
+        # whole budget". Dilution is an optional ML-evasion technique, not a
+        # payload mutation, so it is off unless explicitly enabled.
         if dilution is None:
             self.dilution_target = self.max_length
         else:

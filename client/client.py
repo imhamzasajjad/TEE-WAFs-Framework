@@ -87,7 +87,7 @@ def _dilution_label(dilution, max_mutated_length):
 
 def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples,
                             num_fuzzing_rounds, payload_scope, max_mutated_length,
-                            decode_payloads=False, dilution=None):
+                            decode_payloads=False, dilution=0, alt_vectors=False):
     """Print the exact experiment configuration before requests are sent."""
     print("\n" + "=" * 64)
     print("EXPERIMENT CONFIGURATION")
@@ -103,6 +103,7 @@ def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples
     print(f"Payload scope            : {payload_scope}")
     print(f"Max mutated length       : {max_mutated_length}")
     print(f"Payload decoding         : {'on (URL/HTML decode)' if decode_payloads else 'off'}")
+    print(f"Alternate vectors        : {'on (changes vector)' if alt_vectors else 'off (vector preserved)'}")
     print(f"Benign dilution          : {_dilution_label(dilution, max_mutated_length)}")
     print("=" * 64 + "\n", flush=True)
 
@@ -266,7 +267,8 @@ def main():
         random.seed(int(seed))
     is_xss = fuzzer_type in ('xss', 'html', 'javascript')
     decode_payloads = is_xss
-    dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'on'), max_mutated_length)
+    dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'off'), max_mutated_length)
+    alt_vectors = os.getenv('XSS_ALT_VECTORS', 'off').strip().lower() in ('1', 'true', 'yes', 'on')
     print_run_configuration(
         payloads_file,
         'xss' if is_xss else 'sql',
@@ -277,6 +279,7 @@ def main():
         max_mutated_length,
         decode_payloads,
         dilution,
+        alt_vectors,
     )
     analyze_dataset_enabled = os.getenv('ANALYZE_DATASET', 'yes').strip().lower() in ('1', 'true', 'yes', 'on')
     if analyze_dataset_enabled:
@@ -319,6 +322,7 @@ def main():
         writer.writerow(['Payload scope', payload_scope])
         writer.writerow(['Max mutated length', max_mutated_length])
         writer.writerow(['Payload decoding', 'on' if decode_payloads else 'off'])
+        writer.writerow(['Alternate vectors', 'on' if alt_vectors else 'off'])
         writer.writerow(['Benign dilution', _dilution_label(dilution, max_mutated_length)])
         writer.writerow([])
 
@@ -392,7 +396,7 @@ def main():
             # Generate and send fuzzed payloads
             if fuzzer_class is XssFuzzer:
                 fuzzer = fuzzer_class(original_payload, max_length=max_mutated_length,
-                                      dilution=dilution)
+                                      dilution=dilution, alt_vectors=alt_vectors)
             else:
                 fuzzer = fuzzer_class(original_payload)
             for i in range(1, num_fuzzing_rounds + 1):
