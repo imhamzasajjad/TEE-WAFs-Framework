@@ -54,9 +54,40 @@ def wait_until_services_ready():
     time.sleep(5)  # Adjust the delay as needed based on your Docker service startup time
 
 
+def _parse_dilution(value, max_mutated_length):
+    """Parse the XSS_DILUTION env var into a dilution target for XssFuzzer.
+
+    Accepts: off/no/false/0 -> disabled (None mutations tested in isolation);
+    on/yes/true/max -> fill the whole length budget; an integer -> pad the sent
+    payload up to that many characters (capped at MAX_MUTATED_LENGTH). This is
+    the knob for the dilution ablation (dilution off vs. on vs. a size sweep).
+    """
+    text = str(value or '').strip().lower()
+    if text in ('off', 'no', 'false', '0', 'none', ''):
+        return 0
+    if text in ('on', 'yes', 'true', 'max', 'full'):
+        return None  # None => XssFuzzer fills the full max_length budget
+    try:
+        return max(0, min(int(text), max_mutated_length))
+    except ValueError:
+        raise ValueError(
+            "XSS_DILUTION must be off/on or an integer character target, "
+            f"got '{value}'."
+        )
+
+
+def _dilution_label(dilution, max_mutated_length):
+    """Human-readable description of the dilution setting for the config block."""
+    if dilution is None:
+        return f'on (fill to {max_mutated_length})'
+    if dilution <= 0:
+        return 'off'
+    return f'on (fill to {dilution})'
+
+
 def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples,
                             num_fuzzing_rounds, payload_scope, max_mutated_length,
-                            decode_payloads=False):
+                            decode_payloads=False, dilution=None):
     """Print the exact experiment configuration before requests are sent."""
     print("\n" + "=" * 64)
     print("EXPERIMENT CONFIGURATION")
@@ -72,6 +103,7 @@ def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples
     print(f"Payload scope            : {payload_scope}")
     print(f"Max mutated length       : {max_mutated_length}")
     print(f"Payload decoding         : {'on (URL/HTML decode)' if decode_payloads else 'off'}")
+    print(f"Benign dilution          : {_dilution_label(dilution, max_mutated_length)}")
     print("=" * 64 + "\n", flush=True)
 
 # Function to send request to server and return the results
@@ -228,6 +260,7 @@ def main():
         raise ValueError("PAYLOAD_SCOPE must be 'malicious_only' or 'both'.")
     is_xss = fuzzer_type in ('xss', 'html', 'javascript')
     decode_payloads = is_xss
+    dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'on'), max_mutated_length)
     print_run_configuration(
         payloads_file,
         'xss' if is_xss else 'sql',
@@ -237,6 +270,7 @@ def main():
         payload_scope,
         max_mutated_length,
         decode_payloads,
+        dilution,
     )
     analyze_dataset_enabled = os.getenv('ANALYZE_DATASET', 'yes').strip().lower() in ('1', 'true', 'yes', 'on')
     if analyze_dataset_enabled:
@@ -279,6 +313,7 @@ def main():
         writer.writerow(['Payload scope', payload_scope])
         writer.writerow(['Max mutated length', max_mutated_length])
         writer.writerow(['Payload decoding', 'on' if decode_payloads else 'off'])
+        writer.writerow(['Benign dilution', _dilution_label(dilution, max_mutated_length)])
         writer.writerow([])
 
         # Write the payload-result header row
@@ -350,7 +385,8 @@ def main():
             
             # Generate and send fuzzed payloads
             if fuzzer_class is XssFuzzer:
-                fuzzer = fuzzer_class(original_payload, max_length=max_mutated_length)
+                fuzzer = fuzzer_class(original_payload, max_length=max_mutated_length,
+                                      dilution=dilution)
             else:
                 fuzzer = fuzzer_class(original_payload)
             for i in range(1, num_fuzzing_rounds + 1):

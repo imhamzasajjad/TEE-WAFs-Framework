@@ -305,15 +305,27 @@ class XssFuzzer:
         quoteless_vector,
     ]
 
-    def __init__(self, payload, max_length=2048, max_chain=4, dilute=True):
+    def __init__(self, payload, max_length=2048, max_chain=4, dilution=None):
         self.initial_payload = payload
         self.payload = payload
         self.max_length = max(128, int(max_length))
         self.max_chain = max(1, min(int(max_chain), len(self.strategies)))
-        self.dilute = bool(dilute)
-        # The escalating markup core is kept small so dilution has room to fill
-        # the rest of the length budget with benign text.
-        self._core_cap = max(128, min(self.max_length // 3, 1200))
+        # Dilution target = total length to pad the sent payload up to with
+        # benign text (0 disables it). ``None`` means "fill the whole budget".
+        # Making this a knob lets a run turn dilution off and measure the
+        # mutation operators in isolation, since dilution is the dominant
+        # lever against the character-bigram ML WAF.
+        if dilution is None:
+            self.dilution_target = self.max_length
+        else:
+            self.dilution_target = max(0, min(int(dilution), self.max_length))
+        self.dilute = self.dilution_target > 0
+        # With dilution on, keep the escalating markup core small so the benign
+        # text can dominate; with it off, let the core use the full budget.
+        if self.dilute:
+            self._core_cap = max(128, min(self.max_length // 3, 1200))
+        else:
+            self._core_cap = self.max_length
         self._emitted = set()
         self.last_operator = ''
         self.last_validation = ''
@@ -328,12 +340,12 @@ class XssFuzzer:
         HTML comment, so the browser ignores it and the injected script still
         runs; rule-based engines still see the intact tag.
         """
-        if not self.dilute:
+        if self.dilution_target <= 0:
             return payload
         prefix, markup = _split_markup(payload)
         if not markup:
             return payload
-        budget = self.max_length - len(payload) - 16
+        budget = self.dilution_target - len(payload) - 16
         if budget < 40:
             return payload
         words, used = [], 0
