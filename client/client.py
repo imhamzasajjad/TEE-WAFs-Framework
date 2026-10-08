@@ -5,6 +5,9 @@ import csv
 from datetime import datetime
 import time
 import random
+import html
+import re
+from urllib.parse import unquote
 from sqlfuzzer import SqlFuzzer  # Import your fuzzer class
 from xssfuzzer import XssFuzzer
 from dataset_analyzer import analyze_dataset
@@ -51,8 +54,40 @@ def wait_until_services_ready():
     time.sleep(5)  # Adjust the delay as needed based on your Docker service startup time
 
 
+def _parse_dilution(value, max_mutated_length):
+    """Parse the XSS_DILUTION env var into a dilution target for XssFuzzer.
+
+    Accepts: off/no/false/0 -> disabled (None mutations tested in isolation);
+    on/yes/true/max -> fill the whole length budget; an integer -> pad the sent
+    payload up to that many characters (capped at MAX_MUTATED_LENGTH). This is
+    the knob for the dilution ablation (dilution off vs. on vs. a size sweep).
+    """
+    text = str(value or '').strip().lower()
+    if text in ('off', 'no', 'false', '0', 'none', ''):
+        return 0
+    if text in ('on', 'yes', 'true', 'max', 'full'):
+        return None  # None => XssFuzzer fills the full max_length budget
+    try:
+        return max(0, min(int(text), max_mutated_length))
+    except ValueError:
+        raise ValueError(
+            "XSS_DILUTION must be off/on or an integer character target, "
+            f"got '{value}'."
+        )
+
+
+def _dilution_label(dilution, max_mutated_length):
+    """Human-readable description of the dilution setting for the config block."""
+    if dilution is None:
+        return f'on (fill to {max_mutated_length})'
+    if dilution <= 0:
+        return 'off'
+    return f'on (fill to {dilution})'
+
+
 def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples,
-                            num_fuzzing_rounds, payload_scope, max_mutated_length):
+                            num_fuzzing_rounds, payload_scope, max_mutated_length,
+                            decode_payloads=False, dilution=None):
     """Print the exact experiment configuration before requests are sent."""
     print("\n" + "=" * 64)
     print("EXPERIMENT CONFIGURATION")
@@ -67,6 +102,8 @@ def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples
     print(f"Fuzzing rounds/sample    : {num_fuzzing_rounds}")
     print(f"Payload scope            : {payload_scope}")
     print(f"Max mutated length       : {max_mutated_length}")
+    print(f"Payload decoding         : {'on (URL/HTML decode)' if decode_payloads else 'off'}")
+    print(f"Benign dilution          : {_dilution_label(dilution, max_mutated_length)}")
     print("=" * 64 + "\n", flush=True)
 
 # Function to send request to server and return the results
@@ -119,6 +156,25 @@ def determine_combined_result(original_status, waf_status, ml_status):
         return 'waf_incorrect_ml_correct'
 
 
+def _decode_payload(raw, max_rounds=3):
+    """Decode a log-captured payload into live markup for the XSS fuzzer.
+
+    Dataset rows store attacks as they appeared in request logs: URL-encoded
+    (%3c), HTML-entity-encoded (&lt;), sometimes doubly so, and split by <br>
+    line-wrap markers. The XSS operators expect real <tag> and alert(...)
+    tokens, so without this step they have nothing to rewrite and fall back to
+    wrapping the inert string. Applied for the XSS fuzzer only; SQL payloads
+    are stored raw and must not be altered.
+    """
+    text = re.sub(r'<br\s*/?>', '', raw, flags=re.IGNORECASE)
+    for _ in range(max_rounds):
+        decoded = html.unescape(unquote(text))
+        if decoded == text:
+            break
+        text = decoded
+    return text.strip()
+
+
 def _find_column(fieldnames, candidates):
     """Find a CSV column case-insensitively, including common aliases."""
     lookup = {(name or '').strip().lower(): name for name in fieldnames or []}
@@ -142,8 +198,12 @@ def _status_code(value):
     return code
 
 
-def load_payloads(payloads_file):
-    """Load SQL-style and XSS-style datasets into (payload, expected_status)."""
+def load_payloads(payloads_file, decode=False):
+    """Load SQL-style and XSS-style datasets into (payload, expected_status).
+
+    When ``decode`` is set, each payload is URL/HTML-decoded and stripped of
+    <br> line-wrap markers so that mutation operators see live markup.
+    """
     payload_columns = ('payload', 'payloads', 'request', 'text', 'input', 'query')
     label_columns = ('status code', 'status_code', 'status', 'label', 'class', 'target')
 
@@ -170,7 +230,8 @@ def load_payloads(payloads_file):
 
     payloads = []
     for row_number, row in enumerate(reader, start=2):
-        payload = (row.get(payload_column) or '').strip()
+        raw_payload = row.get(payload_column) or ''
+        payload = _decode_payload(raw_payload) if decode else raw_payload.strip()
         if not payload:
             continue
         try:
@@ -197,14 +258,19 @@ def main():
         raise ValueError("MAX_MUTATED_LENGTH must be at least 128.")
     if payload_scope not in ('malicious_only', 'both'):
         raise ValueError("PAYLOAD_SCOPE must be 'malicious_only' or 'both'.")
+    is_xss = fuzzer_type in ('xss', 'html', 'javascript')
+    decode_payloads = is_xss
+    dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'on'), max_mutated_length)
     print_run_configuration(
         payloads_file,
-        'xss' if fuzzer_type in ('xss', 'html', 'javascript') else 'sql',
+        'xss' if is_xss else 'sql',
         ml_provider,
         num_samples,
         num_fuzzing_rounds,
         payload_scope,
         max_mutated_length,
+        decode_payloads,
+        dilution,
     )
     analyze_dataset_enabled = os.getenv('ANALYZE_DATASET', 'yes').strip().lower() in ('1', 'true', 'yes', 'on')
     if analyze_dataset_enabled:
@@ -215,10 +281,10 @@ def main():
 
     wait_until_services_ready()  # Wait for services to start up
 
-    fuzzer_class = XssFuzzer if fuzzer_type in ('xss', 'html', 'javascript') else SqlFuzzer
+    fuzzer_class = XssFuzzer if is_xss else SqlFuzzer
     print(f"Fuzzer mode: {'xss' if fuzzer_class is XssFuzzer else 'sql'}", flush=True)
 
-    payloads = load_payloads(payloads_file)
+    payloads = load_payloads(payloads_file, decode=decode_payloads)
 
     if payload_scope == 'malicious_only':
         payloads = [row for row in payloads if row[1] == 403]
@@ -246,6 +312,8 @@ def main():
         writer.writerow(['Fuzzing rounds per sample', num_fuzzing_rounds])
         writer.writerow(['Payload scope', payload_scope])
         writer.writerow(['Max mutated length', max_mutated_length])
+        writer.writerow(['Payload decoding', 'on' if decode_payloads else 'off'])
+        writer.writerow(['Benign dilution', _dilution_label(dilution, max_mutated_length)])
         writer.writerow([])
 
         # Write the payload-result header row
@@ -317,7 +385,8 @@ def main():
             
             # Generate and send fuzzed payloads
             if fuzzer_class is XssFuzzer:
-                fuzzer = fuzzer_class(original_payload, max_length=max_mutated_length)
+                fuzzer = fuzzer_class(original_payload, max_length=max_mutated_length,
+                                      dilution=dilution)
             else:
                 fuzzer = fuzzer_class(original_payload)
             for i in range(1, num_fuzzing_rounds + 1):
