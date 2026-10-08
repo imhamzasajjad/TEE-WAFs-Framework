@@ -258,6 +258,12 @@ def main():
         raise ValueError("MAX_MUTATED_LENGTH must be at least 128.")
     if payload_scope not in ('malicious_only', 'both'):
         raise ValueError("PAYLOAD_SCOPE must be 'malicious_only' or 'both'.")
+    # Optional seed so the random payload selection is reproducible across
+    # runs - needed to compare settings (e.g. a dilution sweep) on the same
+    # source payloads. Unset leaves selection random as before.
+    seed = os.getenv('RANDOM_SEED', '').strip()
+    if seed:
+        random.seed(int(seed))
     is_xss = fuzzer_type in ('xss', 'html', 'javascript')
     decode_payloads = is_xss
     dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'on'), max_mutated_length)
