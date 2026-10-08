@@ -19,6 +19,7 @@ services:
       - NUM_FUZZING_ROUNDS=${NUM_FUZZING_ROUNDS:-2} # Fuzzing rounds per payload
       - PAYLOAD_SCOPE=${PAYLOAD_SCOPE:-malicious_only} # malicious_only or both
       - MAX_MUTATED_LENGTH=${MAX_MUTATED_LENGTH:-2048} # XSS mutation length cap
+      - XSS_DILUTION=${XSS_DILUTION:-on} # off / on / <N> benign-padding target
       - FUZZER_TYPE=${FUZZER_TYPE:-xss} # sql (default) or xss/html/javascript
       - ML_WAF_PROVIDER=${ML_WAF_PROVIDER:-wafbrain} # ML provider used by ml_waf
 
