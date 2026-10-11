@@ -21,6 +21,7 @@ services:
       - MAX_MUTATED_LENGTH=${MAX_MUTATED_LENGTH:-2048} # XSS mutation length cap
       - XSS_DILUTION=${XSS_DILUTION:-off} # off / on / <N> benign-padding target
       - XSS_ALT_VECTORS=${XSS_ALT_VECTORS:-off} # on = allow vector-changing operators
+      - XSS_REQUIRE_EXECUTABLE=${XSS_REQUIRE_EXECUTABLE:-on} # fuzz only rows with real XSS markup
       - RANDOM_SEED=${RANDOM_SEED:-} # fix payload selection for reproducible runs
       - FUZZER_TYPE=${FUZZER_TYPE:-xss} # sql (default) or xss/html/javascript
       - ML_WAF_PROVIDER=${ML_WAF_PROVIDER:-wafbrain} # ML provider used by ml_waf

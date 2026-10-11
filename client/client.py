@@ -87,7 +87,8 @@ def _dilution_label(dilution, max_mutated_length):
 
 def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples,
                             num_fuzzing_rounds, payload_scope, max_mutated_length,
-                            decode_payloads=False, dilution=0, alt_vectors=False):
+                            decode_payloads=False, dilution=0, alt_vectors=False,
+                            require_executable=False):
     """Print the exact experiment configuration before requests are sent."""
     print("\n" + "=" * 64)
     print("EXPERIMENT CONFIGURATION")
@@ -104,6 +105,7 @@ def print_run_configuration(payloads_file, fuzzer_type, ml_provider, num_samples
     print(f"Max mutated length       : {max_mutated_length}")
     print(f"Payload decoding         : {'on (URL/HTML decode)' if decode_payloads else 'off'}")
     print(f"Alternate vectors        : {'on (changes vector)' if alt_vectors else 'off (vector preserved)'}")
+    print(f"Executable-XSS filter    : {'on (markup rows only)' if require_executable else 'off'}")
     print(f"Benign dilution          : {_dilution_label(dilution, max_mutated_length)}")
     print("=" * 64 + "\n", flush=True)
 
@@ -174,6 +176,20 @@ def _decode_payload(raw, max_rounds=3):
             break
         text = decoded
     return text.strip()
+
+
+_EXECUTABLE_XSS_RE = re.compile(r"<\s*[a-zA-Z]|on[a-z]+\s*=|javascript\s*:", re.IGNORECASE)
+
+
+def _is_executable_xss(payload):
+    """True if the (decoded) payload contains executable XSS markup.
+
+    The dataset mixes real XSS with plain URLs that carry no markup but are
+    still labelled malicious. Those non-attacks are passed by every WAF, so
+    they inflate the 'bypass' count without representing a real evasion. This
+    test keeps only rows with a tag, an event handler, or a javascript: scheme.
+    """
+    return bool(_EXECUTABLE_XSS_RE.search(payload))
 
 
 def _find_column(fieldnames, candidates):
@@ -269,6 +285,7 @@ def main():
     decode_payloads = is_xss
     dilution = _parse_dilution(os.getenv('XSS_DILUTION', 'off'), max_mutated_length)
     alt_vectors = os.getenv('XSS_ALT_VECTORS', 'off').strip().lower() in ('1', 'true', 'yes', 'on')
+    require_executable = is_xss and os.getenv('XSS_REQUIRE_EXECUTABLE', 'on').strip().lower() in ('1', 'true', 'yes', 'on')
     print_run_configuration(
         payloads_file,
         'xss' if is_xss else 'sql',
@@ -280,6 +297,7 @@ def main():
         decode_payloads,
         dilution,
         alt_vectors,
+        require_executable,
     )
     analyze_dataset_enabled = os.getenv('ANALYZE_DATASET', 'yes').strip().lower() in ('1', 'true', 'yes', 'on')
     if analyze_dataset_enabled:
@@ -294,6 +312,20 @@ def main():
     print(f"Fuzzer mode: {'xss' if fuzzer_class is XssFuzzer else 'sql'}", flush=True)
 
     payloads = load_payloads(payloads_file, decode=decode_payloads)
+
+    exec_total = len(payloads)
+    exec_skipped = 0
+    if require_executable:
+        payloads = [row for row in payloads if _is_executable_xss(row[0])]
+        exec_skipped = exec_total - len(payloads)
+        print(f"Executable-XSS filter: kept {len(payloads)}/{exec_total} rows "
+              f"(skipped {exec_skipped} with no markup)", flush=True)
+        if not payloads:
+            raise ValueError(
+                f"Dataset '{payloads_file}' has no rows with executable XSS markup. "
+                "Set XSS_REQUIRE_EXECUTABLE=off to disable this filter."
+            )
+    exec_kept = len(payloads)
 
     if payload_scope == 'malicious_only':
         payloads = [row for row in payloads if row[1] == 403]
@@ -323,6 +355,9 @@ def main():
         writer.writerow(['Max mutated length', max_mutated_length])
         writer.writerow(['Payload decoding', 'on' if decode_payloads else 'off'])
         writer.writerow(['Alternate vectors', 'on' if alt_vectors else 'off'])
+        writer.writerow(['Executable-XSS filter', 'on' if require_executable else 'off'])
+        if require_executable:
+            writer.writerow(['Rows kept / skipped by filter', f'{exec_kept} kept / {exec_skipped} skipped'])
         writer.writerow(['Benign dilution', _dilution_label(dilution, max_mutated_length)])
         writer.writerow([])
 
